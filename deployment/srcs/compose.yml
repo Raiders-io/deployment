@@ -1,56 +1,49 @@
 services:
-# Web server : only access from outside
-  nginx:
-    container_name: nginx
-    build: 
-      context: ./requirements/nginx
-      args:
-        OPENSSL_SUBJ: ${OPENSSL_SUBJ:?}
-    environment:
-        URL: ${URL:?}
-    networks:
-      - basic-network
-    ports:
-      - "443:443"
-    depends_on:
-      mariadb:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fsk https://localhost/ | grep -q . || exit 1"]
-      interval: 10s
-      timeout: 5s
-      start_period: 20s
-      retries: 5
-    restart: always
 
-# Relational Database (RDBMS)
-  mariadb:
-    container_name: mariadb
-    build: ./requirements/mariadb
+### DevOps 
+# Visualization tool for monitoring and analytics
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    environment:
+      GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL:?}
+    restart: unless-stopped
+    ports:
+      - '${GRAFANA_PORT:?}:3000'
+    volumes:
+      - grafana-storage:/var/lib/grafana
     networks:
       - basic-network
+
+# Data collection for monitoring system
+  prometheus:
+    image: prom/prometheus:main #main-distroless is smaller image
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - '${PROMETHEUS_PORT:?}:9090'
     volumes:
-      - volume-db:/database
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:?}
-      MYSQL_USER: ${MYSQL_USER:?}
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      start_period: 5s
-      retries: 10
-    restart: always
+      - prometheus-storage:/etc/prometheus
+    networks:
+      - basic-network
 
 volumes:
-  volume-db: #database : mariadb
-    name: "db"
+  grafana-storage:
+    name: "grafana-storage"
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "${HOST_DATA_PATH}/data/db"
+      device: "${HOST_DATA_PATH}/data/grafana"
+  prometheus-storage:
+    name: "prometheus-storage"
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "${HOST_DATA_PATH}/data/prometheus"
 
 networks:
-  basic-network: # Accessible only by ports from nginx
+  basic-network:
     driver: bridge
     internal: false

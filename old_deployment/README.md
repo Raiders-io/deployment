@@ -29,11 +29,3 @@ make save
 ```
 
 ### Resources ###
-
-#### DevOps ####
-
-- <https://hub.docker.com/r/grafana/grafana>
-- <https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/>
-- <https://ikarthiks.medium.com/installing-grafana-a-step-by-step-guide-eb5f43b4477d>
-- <https://docs.docker.com/dhi/core-concepts/distroless/>
-- <https://prometheus.io/docs/prometheus/latest/installation/>
