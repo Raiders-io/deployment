@@ -28,12 +28,22 @@ If it's not present :
 make save
 ```
 
+### Links ###
+
+- [Grafana](http://127.0.0.1:3000/)
+- [Prometheus](http://127.0.0.1:9090/)
+
 ### Resources ###
 
 #### DevOps ####
 
-- <https://hub.docker.com/r/grafana/grafana>
-- <https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/>
-- <https://ikarthiks.medium.com/installing-grafana-a-step-by-step-guide-eb5f43b4477d>
-- <https://docs.docker.com/dhi/core-concepts/distroless/>
-- <https://prometheus.io/docs/prometheus/latest/installation/>
+- [Docker : publish your images](https://docs.docker.com/get-started/introduction/build-and-push-first-image/)
+- [Docker : Grafana](https://hub.docker.com/r/grafana/grafana)
+- [Setup Grafana with Docker](https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/)
+- [Installing grafana a step by step guide](https://ikarthiks.medium.com/installing-grafana-a-step-by-step-guide-eb5f43b4477d)
+- [Docker : distroless](https://docs.docker.com/dhi/core-concepts/distroless/)
+- [Docker : debug](https://docs.docker.com/reference/cli/docker/debug/)
+- [Docker, alpine vs distroless vs scratch](https://medium.com/google-cloud/alpine-distroless-or-scratch-caac35250e0b)
+- [Docker : multi-stage build](https://docs.docker.com/build/building/multi-stage/)
+- [Docker : Prometheus](https://prometheus.io/docs/prometheus/latest/installation/)
+- [Prometheus configuration example](https://github.com/prometheus/prometheus/blob/main/documentation/examples/prometheus.yml)
