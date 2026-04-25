@@ -7,7 +7,7 @@ NAME = ft_transcendance
 USER = $(shell whoami)
 REMOTE = $(shell whoami)@127.0.0.1
 SSH_PORT = 2200
-SERVICES_NAMES = mariadb nginx wordpress
+SERVICES_NAMES = nodejs grafana prometheus
 VOLUMES_NAMES = db web
 MOUNT_PATH = /home/$(USER)/goinfre/data
 

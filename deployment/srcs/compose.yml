@@ -32,6 +32,20 @@ services:
       - basic-network
     restart: unless-stopped
 
+# NodeJS
+  nodejs:
+    image: node:25.9.0-alpine3.23
+    container_name: nodejs
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - '${NODEJS_PORT:?}:3000' #default port is 3000
+    volumes:
+      - app:/app
+    networks:
+      - basic-network
+    restart: unless-stopped
+
 volumes:
   grafana-storage:
     name: "grafana-storage"
