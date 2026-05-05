@@ -15,23 +15,25 @@ all:
 	@$(MAKE) $(NAME)
 
 $(NAME):
-	$(NAME_CMD)
+	@$(MAKE) create-volumes
+	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
 
 up:
-	$(UP_CMD)
+	@$(MAKE) create-volumes
+	docker compose -f srcs/compose.yml up -d
 
 down:
-	$(DOWN_CMD)
+	docker compose -f srcs/compose.yml down
 
 ls: list
 list:
 	docker ps
 
-save:
-	$(RSYNC_CMD)
+status:
+	docker ps
 
-ssh:
-	$(SSH_CMD)
+status-all:
+	docker ps -a
 
 stop:
 	docker stop $(SERVICES_NAMES)
@@ -42,6 +44,9 @@ stop-all:
 clean:
 clean-all:
 	docker system prune --all -f
+
+create-volumes:
+	@mkdir -p $(MOUNT_PATH)/prometheus $(MOUNT_PATH)/grafana
 
 rm-volumes:
 	$(RM_VOLUMES)
@@ -68,21 +73,6 @@ re:
 debug-print:
 	@ls -Al -R --color=auto --ignore=.git
 
-# Special Variable testing to adapt commands if on Alpine VM or not
-HOST := $(shell hostname)
-# ifeq ($(HOST),alpine) #on REMOTE
-
-RSYNC_CMD = @echo "Already on Alpine, please only use HOST"
-SSH_CMD = @echo "Already on Alpine, please use HOST to work"
-NAME_CMD = \
-	@mkdir -p $(MOUNT_PATH)/prometheus $(MOUNT_PATH)/grafana && \
-	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
-UP_CMD = \
-	@mkdir -p $(MOUNT_PATH)/prometheus $(MOUNT_PATH)/grafana && \
-	docker compose -f srcs/compose.yml up -d
-DOWN_CMD = \
-	@mkdir -p $(MOUNT_PATH)/prometheus $(MOUNT_PATH)/grafana && \
-	docker compose -f srcs/compose.yml down
 RM_VOLUMES = \
 	@read -p "Êtes-vous sûr de vouloir supprimer $(MOUNT_PATH) ? [y/N] " confirm && \
 	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
@@ -92,21 +82,3 @@ RM_VOLUMES = \
 	else \
 		echo "Annulé"; \
 	fi
-
-# else #on HOST
-
-# RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p $(SSH_PORT)' $(shell pwd)/ $(REMOTE):~/ft_transcendance
-# SSH_CMD = @ssh -XC -t -p $(SSH_PORT) $(REMOTE) "cd ~/ft_transcendance && sh --login"
-# NAME_CMD = @echo "$(NAME) Should be executed on Alpine VM only"
-# UP_CMD = @echo "up Should be executed on Alpine VM only"
-# RM_VOLUMES = @echo "rm-volumes Should be executed on Alpine VM only"
-
-start-vm:
-	VBoxManage startvm "Alpine" --type headless
-stop-vm:
-	VBoxManage controlvm "Alpine" acpipowerbutton
-pull-vm:
-	rsync -r ~/sgoinfre/Alpine ~/goinfre/ --progress
-push-vm:
-	rsync -r ~/goinfre/Alpine ~/sgoinfre/ --progress
-# endif
