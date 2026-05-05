@@ -89,6 +89,25 @@ services:
 #       - monitoring-network
 #     restart: unless-stopped
 
+#   elasticsearch:
+#     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+#     environment:
+#       - discovery.type=single-node
+
+#   kibana:
+#     image: docker.elastic.co/kibana/kibana:8.13.0
+#     ports:
+#       - "5601:5601"
+
+#   filebeat:
+#     image: docker.elastic.co/beats/filebeat:8.13.0
+#     user: root
+#     volumes:
+#       - /var/lib/docker/containers:/var/lib/docker/containers:ro
+#       - /var/run/docker.sock:/var/run/docker.sock:ro
+#       - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+
+
 networks:
   gateway-network:
     driver: bridge
