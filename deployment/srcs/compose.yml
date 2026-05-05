@@ -1,5 +1,26 @@
 services:
 
+### Web Server: interface for users to interact with the application
+  nginx:
+    container_name: nginx
+    build: 
+      context: ./requirements/nginx
+      args:
+        OPENSSL_SUBJ: ${OPENSSL_SUBJ:?}
+    environment:
+        URL: ${URL:?}
+    networks:
+      - basic-network
+    ports:
+      - "443:443"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsk https://localhost/ | grep -q . || exit 1"]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 5
+    restart: always
+
 ### DevOps 
 # Visualization tool for monitoring and analytics
   grafana:
