@@ -7,7 +7,7 @@ NAME = ft_transcendance
 USER = $(shell whoami)
 REMOTE = $(shell whoami)@127.0.0.1
 SSH_PORT = 2200
-SERVICES_NAMES = nodejs grafana prometheus
+SERVICES_NAMES = nginx nodejs #grafana prometheus
 VOLUMES_NAMES = db web
 MOUNT_PATH = /home/$(USER)/goinfre/data
 
@@ -19,6 +19,9 @@ $(NAME):
 
 up:
 	$(UP_CMD)
+
+down:
+	$(DOWN_CMD)
 
 ls: list
 list:
@@ -77,6 +80,9 @@ NAME_CMD = \
 UP_CMD = \
 	@mkdir -p $(MOUNT_PATH)/prometheus $(MOUNT_PATH)/grafana && \
 	docker compose -f srcs/compose.yml up -d
+DOWN_CMD = \
+	@mkdir -p $(MOUNT_PATH)/prometheus $(MOUNT_PATH)/grafana && \
+	docker compose -f srcs/compose.yml down
 RM_VOLUMES = \
 	@read -p "Êtes-vous sûr de vouloir supprimer $(MOUNT_PATH) ? [y/N] " confirm && \
 	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \

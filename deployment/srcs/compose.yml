@@ -4,7 +4,7 @@ services:
   nginx:
     container_name: nginx
     build: 
-      context: ./requirements/nginx
+      context: ./nginx
       args:
         OPENSSL_SUBJ: ${OPENSSL_SUBJ:?}
     environment:
@@ -12,7 +12,7 @@ services:
     networks:
       - basic-network
     ports:
-      - "443:443"
+      - "4443:443"
     healthcheck:
       test: ["CMD-SHELL", "curl -fsk https://localhost/ | grep -q . || exit 1"]
       interval: 10s
@@ -21,66 +21,66 @@ services:
       retries: 5
     restart: always
 
+# NodeJS
+  # nodejs:
+  #   image: node:25.9.0-alpine3.23
+  #   container_name: nodejs
+  #   working_dir: /app
+  #   command: sh -c "npm install && npm run start"
+  #   ports:
+  #     - '${NODEJS_PORT:?}:3000' #default port is 3000
+  #   volumes:
+  #     - ./app:/app
+  #   networks:
+  #     - basic-network
+  #   restart: unless-stopped
+
 ### DevOps 
 # Visualization tool for monitoring and analytics
-  grafana:
-    image: grafana/grafana:13.0.1
-    container_name: grafana
-    environment:
-      GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL:?}
-    ports:
-      - '${GRAFANA_PORT:?}:3000' #default port is 3000
-    volumes:
-      - grafana-storage:/var/lib/grafana
-    networks:
-      - basic-network
-    restart: unless-stopped
+#   grafana:
+#     image: grafana/grafana:13.0.1
+#     container_name: grafana
+#     environment:
+#       GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL:?}
+#     ports:
+#       - '${GRAFANA_PORT:?}:3000' #default port is 3000
+#     volumes:
+#       - grafana-storage:/var/lib/grafana
+#     networks:
+#       - basic-network
+#     restart: unless-stopped
 
-# Data collection for monitoring system
-  prometheus:
-    image: prom/prometheus:v3.11.2-distroless
-    container_name: prometheus
-    command:
-      - '--web.listen-address=:9090'
-      - '--config.file=/prometheus.yml'
-    ports:
-      - '${PROMETHEUS_PORT:?}:9090' #default port is 9090
-    volumes:
-      - prometheus-storage:/etc/prometheus/
-      - ./prometheus.config.yml:/prometheus.yml
-    networks:
-      - basic-network
-    restart: unless-stopped
+# # Data collection for monitoring system
+#   prometheus:
+#     image: prom/prometheus:v3.11.2-distroless
+#     container_name: prometheus
+#     command:
+#       - '--web.listen-address=:9090'
+#       - '--config.file=/prometheus.yml'
+#     ports:
+#       - '${PROMETHEUS_PORT:?}:9090' #default port is 9090
+#     volumes:
+#       - prometheus-storage:/etc/prometheus/
+#       - ./prometheus.config.yml:/prometheus.yml
+#     networks:
+#       - basic-network
+#     restart: unless-stopped
 
-# NodeJS
-  nodejs:
-    image: node:25.9.0-alpine3.23
-    container_name: nodejs
-    working_dir: /app
-    command: sh -c "npm install && npm run start"
-    ports:
-      - '${NODEJS_PORT:?}:3000' #default port is 3000
-    volumes:
-      - ./app:/app
-    networks:
-      - basic-network
-    restart: unless-stopped
-
-volumes:
-  grafana-storage:
-    name: "grafana-storage"
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: "${HOST_DATA_PATH:?}/data/grafana"
-  prometheus-storage:
-    name: "prometheus-storage"
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: "${HOST_DATA_PATH:?}/data/prometheus"
+# volumes:
+  # grafana-storage:
+  #   name: "grafana-storage"
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     o: bind
+  #     device: "${HOST_DATA_PATH:?}/data/grafana"
+  # prometheus-storage:
+  #   name: "prometheus-storage"
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     o: bind
+  #     device: "${HOST_DATA_PATH:?}/data/prometheus"
 
 networks:
   basic-network:
