@@ -45,3 +45,10 @@ make save
 - [Docker : multi-stage build](https://docs.docker.com/build/building/multi-stage/)
 - [Docker : Prometheus](https://prometheus.io/docs/prometheus/latest/installation/)
 - [Prometheus configuration example](https://github.com/prometheus/prometheus/blob/main/documentation/examples/prometheus.yml)
+
+ELK :
+
+- <https://www.elastic.co/docs/deploy-manage/deploy/self-managed/install-elasticsearch-docker-basic>
+- <https://thepracticalsysadmin.com/performance-tuning-elk-stack/>
+- <https://hub.docker.com/_/elasticsearch>
+- <https://logz.io/learn/complete-guide-elk-stack/#what-elk-stack>
