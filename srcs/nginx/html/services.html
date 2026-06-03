@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dashboard Services - Grid Control</title>
+	<link rel="stylesheet" href="stylesheet.css">
+	<script async src="services.js"></script>
+</head>
+<body>
+<div class="container">
+	<h2>🚀 Service Control Panel</h2>
+	<div class="subtitle">Cliquez sur un service pour exécuter une requête API</div>
+	
+	<!-- Grille Flexbox 4 colonnes -->
+	<div class="grid">
+		<button class="service-btn gateway" data-service="gateway" data-method="get">
+			<div class="service-icon">🌐</div>
+			<div class="service-name">Gateway</div>
+		</button>
+	
+	<button class="service-btn files" data-service="files" data-method="post">
+			<div class="service-icon">📁</div>
+			<div class="service-name">Files</div>
+		</button>
+		
+	<button class="service-btn social" data-service="social" data-method="get">
+			<div class="service-icon">💬</div>
+			<div class="service-name">Social</div>
+		</button>
+		
+		<button class="service-btn auth" data-service="auth" data-method="post">
+			<div class="service-icon">🔐</div>
+			<div class="service-name">Auth</div>
+		</button>
+		
+		<button class="service-btn chat" data-service="chat" data-method="get">
+			<div class="service-icon">💭</div>
+			<div class="service-name">Chat</div>
+		</button>
+		
+		<button class="service-btn monitoring" data-service="monitoring" data-method="get">
+			<div class="service-icon">📊</div>
+			<div class="service-name">Back-office</div>
+		</button>
+		
+		<button class="service-btn db" data-service="db" data-method="get">
+			<div class="service-icon">🗄️</div>
+			<div class="service-name">Database</div>
+		</button>
+
+	<button class="service-btn other_service" data-service="other_service" data-method="get">
+			<div class="service-icon">🌐</div>
+			<div class="service-name">Autre Service</div>
+		</button>
+	</div>
+	
+	<!-- Zone d'affichage des résultats -->
+	<div class="results">
+		<h3>
+			📡 Résultats des requêtes
+			<span id="statusBadge" class="status-badge">Prêt</span>
+		</h3>
+		<div id="response">
+			Cliquez sur un service pour envoyer une requête...
+		</div>
+	</div>
+</div>
+</body>
+</html>
