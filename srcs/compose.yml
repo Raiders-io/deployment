@@ -23,4 +23,4 @@ services:
 networks:
   public-network:
     driver: bridge
-    # internal: false
+    external: true
