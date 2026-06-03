@@ -19,7 +19,7 @@ $(NAME):
 	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
 
 build-all:
-	docker network create public-network || true
+	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
 	cd srcs/ObjectStorage && docker compose -f compose.yml up -d --build --force-recreate --remove-orphans
 	cd srcs/Backend-Lesson && docker compose -f docker-compose.yml up -d --build --force-recreate --remove-orphans
 
