@@ -66,7 +66,89 @@
 	<form id="avatarForm" enctype="multipart/form-data">
 		<div>
 		<label for="file">Choose file to upload</label><br>
+		<input type="file" id="avatar" name="avatar" multiple />
+		</div><br>
+		<div>
+		<button type="submit">Submit</button>
+		</div>
+	</form>
+
+<h3>Upload Files</h3>
+	<!-- Formulaire d'upload de fichiers -->
+	<form id="filesForm" enctype="multipart/form-data">
+		<div>
+		<label for="file">Choose file(s) to upload</label><br>
 		<input type="file" id="file" name="file" multiple />
+		</div><br>
+		<div>
+		<button type="submit">Submit</button>
+		</div>
+	</form>
+
+<h3>Update File</h3>
+	<!-- Formulaire de mise à jour de fichier -->
+	<form id="updateFileForm" enctype="multipart/form-data">
+		<div>
+		<label for="updateFileName">File name to update</label><br>
+		<input type="text" placeholder="Enter File Name" name="updateFileName" required><br>
+		<label for="updateFile">Choose new file</label><br>
+		<input type="file" id="updateFile" name="updateFile" required />
+		</div><br>
+		<div>
+		<button type="submit">Submit</button>
+		</div>
+	</form>
+
+<h3>Delete File</h3>
+	<!-- Formulaire de suppression de fichier -->
+	<form id="deleteFileForm" enctype="multipart/form-data">
+		<div>
+		<label for="deleteFileName">File name to delete</label><br>
+		<input type="text" placeholder="Enter File Name" name="deleteFileName" required><br>
+		</div><br>
+		<div>
+		<button type="submit">Submit</button>
+		</div>
+	</form>
+
+<h3>Update Multiple Files</h3>
+	<!-- Formulaire de mise à jour multiple de fichiers -->
+	<form id="updateMultipleFilesForm" enctype="multipart/form-data">
+		<div>
+		<label for="updateMultipleFiles">Choose new file(s)</label><br>
+		<input type="file" id="updateMultipleFiles" name="updateMultipleFiles" multiple required />
+		</div><br>
+		<div>
+		<button type="submit">Submit</button>
+		</div>
+	</form>
+
+<h3>Delete Multiple Files</h3>
+	<!-- Formulaire de suppression multiple de fichiers -->
+	<form id="deleteMultipleFilesForm">
+		<div>
+		<label for="deleteFileNames">File names to delete (one per line)</label><br>
+		<textarea id="deleteFileNames" name="deleteFileNames" placeholder="file1.txt&#10;file2.pdf&#10;file3.doc" required></textarea>
+		</div><br>
+		<div>
+		<button type="submit">Submit</button>
+		</div>
+	</form>
+
+<h3>Index of files</h3>
+	<!-- Formulaire d'upload de fichiers -->
+	<form id="indexFilesForm" enctype="multipart/form-data">
+		<div>
+		<button type="submit">Submit</button>
+		</div>
+	</form>
+
+<h3>Show Specific File</h3>
+	<!-- Formulaire d'upload de fichiers -->
+	<form id="showFileForm" enctype="multipart/form-data">
+		<div>
+		<label for="file">Choose file name to search</label><br>
+		<input type="text" placeholder="Enter File Name" name="fileName" required><br>
 		</div><br>
 		<div>
 		<button type="submit">Submit</button>
@@ -178,23 +260,206 @@ document.getElementById('avatarForm').addEventListener('submit', async (e) => {
 	}
 
 	const formData = new FormData();
-	const fileInput = document.getElementById('file');
+	const fileInput = document.getElementById('avatar');
 	for (const file of fileInput.files) {
 		formData.append('avatars[]', file); // avatars[] est le nom du type pour le validator
 	}
 
 	const res = await fetch('http://127.0.0.1:3334/profile/avatar', {
 		method: 'POST',
-		headers: {
-			'Authorization': `Bearer ${authToken}`,
-			// pas de Content-Type ici : fetch le gère automatiquement pour multi-part
-		},
+		headers: { 'Authorization': `Bearer ${authToken}` },
 		body: formData,
 	});
 
 	const json = await res.text();
 	console.log('Response upload :', json);
 });
+
+
+// Upload files
+document.getElementById('filesForm').addEventListener('submit', async (e) => {
+	e.preventDefault();
+
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
+
+	const formData = new FormData();
+	const fileInput = document.getElementById('file');
+	for (const file of fileInput.files) {
+		formData.append('files[]', file); // files[] est le nom du type pour le validator
+	}
+
+	const res = await fetch('http://127.0.0.1:3334/storage/objects', {
+		method: 'POST',
+		headers: { 'Authorization': `Bearer ${authToken}` },
+		body: formData,
+	});
+
+	const json = await res.text();
+	console.log('Response upload :', json);
+});
+
+// Update single file by name
+document.getElementById('updateFileForm').addEventListener('submit', async (e) => {
+	e.preventDefault();
+
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
+
+	const form = e.target;
+	const formData = new FormData();
+	const fileInput = document.getElementById('updateFile');
+	for (const file of fileInput.files) {
+		formData.append('files[]', file);
+	}
+
+	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${form.updateFileName.value}`, {
+		method: 'PUT',
+		headers: {
+			'Authorization': `Bearer ${authToken}`,
+		},
+		body: formData,
+	});
+
+	const json = await res.text();
+	console.log('Response update :', json);
+	alert('File updated successfully');
+});
+
+// Update multiple files by their names
+document.getElementById('updateMultipleFilesForm').addEventListener('submit', async (e) => {
+	e.preventDefault();
+
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
+
+	const formData = new FormData();
+	const fileInput = document.getElementById('updateMultipleFiles');
+	for (const file of fileInput.files) {
+		formData.append('files[]', file);
+	}
+
+	const res = await fetch('http://127.0.0.1:3334/storage/objects/', {
+		method: 'PUT',
+		headers: {
+			'Authorization': `Bearer ${authToken}`,
+		},
+		body: formData,
+	});
+
+	const json = await res.text();
+	console.log('Response update :', json);
+	alert('Files updated successfully');
+});
+
+// Delete single file by name
+document.getElementById('deleteFileForm').addEventListener('submit', async (e) => {
+	e.preventDefault();
+
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
+
+	const form = e.target;
+
+	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${form.deleteFileName.value}`, {
+		method: 'DELETE',
+		headers: {
+			'Authorization': `Bearer ${authToken}`,
+		},
+	});
+
+	const json = await res.text();
+	console.log('Response delete :', json);
+	alert('File deleted successfully');
+});
+
+// Delete multiple files by names
+document.getElementById('deleteMultipleFilesForm').addEventListener('submit', async (e) => {
+	e.preventDefault();
+
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
+
+	const form = e.target;
+	const fileNames = form.deleteFileNames.value
+		.split('\n')
+		.map(name => name.trim())
+		.filter(name => name.length > 0);
+
+	if (fileNames.length === 0) {
+		alert('Please enter at least one file name');
+		return;
+	}
+
+	const res = await fetch('http://127.0.0.1:3334/storage/objects/', {
+		method: 'DELETE',
+		headers: {
+			'Authorization': `Bearer ${authToken}`,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ ids: fileNames }),
+	});
+
+	const json = await res.text();
+	console.log('Response delete :', json);
+	alert('Files deleted successfully');
+});
+
+
+// Index of files
+document.getElementById('indexFilesForm').addEventListener('submit', async (e) => {
+	e.preventDefault();
+	const form = e.target;
+
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
+
+	const res = await fetch('http://127.0.0.1:3334/storage/objects', {
+		method: 'GET',
+		headers: { 'Content-Type': 'application/json',
+					'Authorization': `Bearer ${authToken}`,
+		},
+	});
+	const json = await res.text();
+	console.log('Response upload :', json);
+});
+
+// Show Specific File
+document.getElementById('showFileForm').addEventListener('submit', async (e) => {
+	e.preventDefault();
+	const form = e.target;
+
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
+
+	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${form.fileName.value}`, {
+		method: 'GET',
+		headers: { 'Authorization': `Bearer ${authToken}` },
+	});
+
+	const blob = await res.blob();
+	const url = window.URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = `${form.fileName.value}`;
+	a.click();
+	window.URL.revokeObjectURL(url);
+});
+;
 
 // create lesson
 document.getElementById('createLessonForm').addEventListener('submit', async (e) => {
