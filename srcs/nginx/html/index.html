@@ -451,6 +451,13 @@ document.getElementById('showFileForm').addEventListener('submit', async (e) => 
 		headers: { 'Authorization': `Bearer ${authToken}` },
 	});
 
+	if (!res.ok) {
+		const errorBody = await res.text();
+		console.error('Show file error :', errorBody);
+		alert(`Failed to fetch file (${res.status})`);
+		return;
+	}
+
 	const blob = await res.blob();
 	const url = window.URL.createObjectURL(blob);
 	const a = document.createElement('a');
