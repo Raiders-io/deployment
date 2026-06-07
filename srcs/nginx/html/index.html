@@ -5,12 +5,37 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Dashboard Testing Lesson and Objects</title>
 	<link rel="stylesheet" href="stylesheet.css">
-	<script async src="script.js"></script>
+	<!-- <script async src="script.js"></script> -->
 </head>
 <body>
-<h1>Object Storage API</h1>
+<h1><img src="favicon.png" alt="favicon" class="favicon">Raiders.io</h1>
 
-<h2>Object Storage API - Login</h2>
+<h2>Object Storage API</h2>
+<h3>POST Signup</h3>
+	<!-- Formulaire de login -->
+	<form id="signupForm">
+	<div class="container">
+		<label for="fullName"><b>First Name</b></label>
+		<input type="text" placeholder="Enter First Name" name="fullName" required><br>
+
+		<label for="email"><b>Email</b></label>
+		<input type="text" placeholder="Enter Email" name="email" required><br>
+		
+		<label for="password"><b>Password</b></label>
+		<input type="password" placeholder="Enter Password" name="password" required><br>
+		
+		<label for="passwordConfirmation"><b>Confirm Password</b></label>
+		<input type="password" placeholder="Confirm Password" name="passwordConfirmation" required><br>
+		
+		<label>
+			<input type="checkbox" checked="checked" name="remember"> Remember me
+		</label><br>
+		
+		<button type="submit">Signup</button>
+	</div>
+  </form>
+
+<h3>POST Login</h3>
 	<!-- Formulaire de login -->
 	<form id="loginForm">
 	<div class="container">
@@ -27,6 +52,26 @@
 		<button type="submit">Login</button>
 	</div>
   </form>
+
+<h3>GET Profile</h3>
+	<!-- Formulaire de Profile -->
+	<form id="profileForm">
+	<div class="container">
+		<button type="submit">Get Profile</button>
+	</div>
+  </form>
+
+<h3>Upload Avatar</h3>
+	<!-- Formulaire d'upload d'avatar -->
+	<form id="avatarForm" enctype="multipart/form-data">
+		<div>
+		<label for="file">Choose file to upload</label><br>
+		<input type="file" id="file" name="file" multiple />
+		</div><br>
+		<div>
+		<button type="submit">Submit</button>
+		</div>
+	</form>
 
 <h2>Lesson API</h2>
 <h3>Create Lesson</h3>
@@ -48,22 +93,37 @@
 		</div>
 	</form>
 
-<h2>Object Storage API - Upload Avatar</h2>
-	<!-- Formulaire d'upload d'avatar -->
-	<form id="avatarForm" enctype="multipart/form-data">
-		<div>
-		<label for="file">Choose file to upload</label><br>
-		<input type="file" id="file" name="file" multiple />
-		</div><br>
-		<div>
-		<button type="submit">Submit</button>
-		</div>
-	</form>
-
-	<script>
+<script>
 	let authToken = null;
 
-// Login
+// Object Storage API - Signup
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+	e.preventDefault();
+	const form = e.target;
+
+	const res = await fetch('http://127.0.0.1:3334/api/v1/auth/signup', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			fullName: form.fullName.value,
+			email: form.email.value,
+			password: form.password.value,
+			passwordConfirmation: form.passwordConfirmation.value,
+		}),
+	});
+
+	const json = await res.json();
+	if (!res.ok) {
+		console.error('Signup error :', json);
+		alert('Signup failed: ' + (json.message || 'Unknown error'));
+		return;
+	}
+	authToken = json.data.token;
+	console.log('Token récupéré :', authToken);
+	alert('Connected! You can now upload your avatar.');
+});
+
+// Object Storage API - Login
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	const form = e.target;
@@ -88,8 +148,8 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 	alert('Connected! You can now upload your avatar.');
 });
 
-// create lesson
-document.getElementById('createLessonForm').addEventListener('submit', async (e) => {
+// Object Storage API - get profile
+document.getElementById('profileForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	const form = e.target;
 
@@ -98,21 +158,14 @@ document.getElementById('createLessonForm').addEventListener('submit', async (e)
 		return;
 	}
 
-	const tagsList = document.getElementById('tags');
-	const selectedTags = [];
-	for (const tag of tagsList.querySelectorAll('input[type="checkbox"]:checked')) {
-		selectedTags.push(tag.value);
-	}
-	const res = await fetch('http://127.0.0.1:3333/lessons/', {
+	const res = await fetch('http://127.0.0.1:3334/api/v1/account/profile', {
 		method: 'GET',
-		headers: { 'Content-Type': 'application/json' },
-	// 	body: JSON.stringify({
-	// 		title: form.title.value,
-	// 		tags: selectedTags,
-	// }),
+		headers: {
+			'Authorization': `Bearer ${authToken}`,
+		},
 	});
 	const json = await res.text();
-	console.log('Response upload :', json);
+	console.log('Response profile :', json);
 });
 
 // Upload avatar
@@ -143,6 +196,32 @@ document.getElementById('avatarForm').addEventListener('submit', async (e) => {
 	console.log('Response upload :', json);
 });
 
-	</script>
+// create lesson
+document.getElementById('createLessonForm').addEventListener('submit', async (e) => {
+	e.preventDefault();
+	const form = e.target;
+
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
+
+	const tagsList = document.getElementById('tags');
+	const selectedTags = [];
+	for (const tag of tagsList.querySelectorAll('input[type="checkbox"]:checked')) {
+		selectedTags.push(tag.value);
+	}
+	const res = await fetch('http://127.0.0.1:3333/lessons/', {
+		method: 'GET',
+		headers: { 'Content-Type': 'application/json' },
+	// 	body: JSON.stringify({
+	// 		title: form.title.value,
+	// 		tags: selectedTags,
+	// }),
+	});
+	const json = await res.text();
+	console.log('Response upload :', json);
+});
+</script>
 </body>
 </html>
