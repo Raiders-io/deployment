@@ -20,6 +20,20 @@ services:
       retries: 5
     restart: always
 
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api-gateway:/app
+      - /app/node_modules
+    networks:
+      - public-network
+    depends_on:
+      nginx:
+        condition: service_healthy
+
 networks:
   public-network:
     driver: bridge
