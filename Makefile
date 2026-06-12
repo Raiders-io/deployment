@@ -5,27 +5,31 @@ MAKE := $(MAKE) $(NO_DIR)
 NAME = ft_transcendance
 
 USER = $(shell whoami)
-REMOTE = $(shell whoami)@127.0.0.1
-SSH_PORT = 2200
-SERVICES_NAMES = nginx nodejs #grafana prometheus
-VOLUMES_NAMES = db web
-MOUNT_PATH = /home/$(USER)/goinfre/data
+
 
 all:
 	@$(MAKE) $(NAME)
 
 $(NAME):
-	@$(MAKE) create-volumes
 	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
 
 build-all:
 	docker network create public-network || true
-	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
+	@$(MAKE) $(NAME)
+	@$(MAKE) build-ObjectStorage
+# 	@$(MAKE) build-Backend-Lesson
+
+build-ObjectStorage:
 	cd ../ObjectStorage && docker compose -f compose.yml up -d --build --force-recreate --remove-orphans
-# 	cd ../Backend-Lesson && docker compose -f docker-compose.yml up -d --build --force-recreate --remove-orphans
+
+build-Backend-Lesson:
+	cd ../Backend-Lesson && docker compose -f docker-compose.yml up -d --build --force-recreate --remove-orphans
+
+env:
+	@cd srcs/ && cp .env.example .env
+	@echo "Please edit the .env file with your own values, use README.md as a reference."
 
 up:
-	@$(MAKE) create-volumes
 	docker compose -f srcs/compose.yml up -d
 
 down:
@@ -41,8 +45,6 @@ status:
 status-all:
 	docker ps -a
 
-stop:
-	docker stop $(SERVICES_NAMES)
 
 stop-all:
 	docker stop $(shell docker ps -q)
@@ -50,15 +52,6 @@ stop-all:
 clean:
 clean-all:
 	docker system prune --all -f
-
-create-volumes:
-	@mkdir -p $(MOUNT_PATH)/prometheus $(MOUNT_PATH)/grafana
-
-rm-volumes:
-	$(RM_VOLUMES)
-
-clean-volumes:
-	docker volume rm $(VOLUMES_NAMES)
 
 clean-all-volumes:
 	docker volume rm $(shell docker volume ls -q)
@@ -78,13 +71,3 @@ re:
 
 debug-print:
 	@ls -Al -R --color=auto --ignore=.git
-
-RM_VOLUMES = \
-	@read -p "Êtes-vous sûr de vouloir supprimer $(MOUNT_PATH) ? [y/N] " confirm && \
-	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
-		rm -rf $(MOUNT_PATH) && \
-		echo "Dossier supprimé" || \
-		echo "Erreur lors de la suppression"; \
-	else \
-		echo "Annulé"; \
-	fi
