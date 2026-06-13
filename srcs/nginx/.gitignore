@@ -1,0 +1,6 @@
+nginx.conf
+tmp*
+*.crt
+*.key
+certs/*
+private/*
