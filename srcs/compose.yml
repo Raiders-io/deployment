@@ -26,6 +26,10 @@ services:
       target: production # production or dev
     container_name: gateway-api
     image: gateway-api:local
+    environment:
+      - PORT=3000
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL:?}
+      - MESSAGING_SERVICE_URL=${MESSAGING_SERVICE_URL:?}
     ports:
       - "3000:3000"
     networks:
