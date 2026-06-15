@@ -21,18 +21,19 @@ services:
     restart: always
 
   api-gateway:
-    build: ./api-gateway
-    container_name: api-gateway
+    build: 
+      context: ./api-gateway
+      target: production # production or dev
+    container_name: gateway-api
+    image: gateway-api:local
     ports:
       - "3000:3000"
-    volumes:
-      - ./api-gateway:/app
-      - /app/node_modules
     networks:
       - public-network
     depends_on:
       nginx:
         condition: service_healthy
+    restart: always
 
 networks:
   public-network:

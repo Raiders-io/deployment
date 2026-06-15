@@ -89,8 +89,6 @@
 	<!-- Formulaire de mise à jour de fichier -->
 	<form id="updateFileForm" enctype="multipart/form-data">
 		<div>
-		<label for="updateFileName">File name to update</label><br>
-		<input type="text" placeholder="Enter File Name" name="updateFileName" required><br>
 		<label for="updateFile">Choose new file</label><br>
 		<input type="file" id="updateFile" name="updateFile" required />
 		</div><br>
@@ -313,11 +311,13 @@ document.getElementById('updateFileForm').addEventListener('submit', async (e) =
 	const form = e.target;
 	const formData = new FormData();
 	const fileInput = document.getElementById('updateFile');
-	for (const file of fileInput.files) {
-		formData.append('files[]', file);
+	if (fileInput.files.length !== 1) {
+		alert('Please select exactly one file to update.');
+		return;
 	}
+	formData.append('file', fileInput.files[0]);
 
-	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${form.updateFileName.value}`, {
+	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${fileInput.files[0].name}`, {
 		method: 'PUT',
 		headers: {
 			'Authorization': `Bearer ${authToken}`,
