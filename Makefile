@@ -26,8 +26,8 @@ build-Backend-Lesson:
 	cd ../Backend-Lesson && docker compose -f docker-compose.yml up -d --build --force-recreate --remove-orphans
 
 env:
-	@cd srcs/ && cp .env.example .env
-	@echo "Please edit the .env file with your own values, use README.md as a reference."
+	@chmod +x ./setup_env.sh
+	@./setup_env.sh
 
 up:
 	docker compose -f srcs/compose.yml up -d
