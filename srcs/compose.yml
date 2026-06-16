@@ -5,9 +5,9 @@ services:
     image: nginx:1.31.1-alpine-slim
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/etc/ssl/certs:ro
-      - ./nginx/private:/etc/ssl/private:ro
-      - ./nginx/html:/var/www/html:ro
+      - nginx-html:/var/www/html:ro
+      - nginx-certs:/etc/ssl/certs:ro
+      - nginx-private:/etc/ssl/private:ro
     networks:
       - public-network
     ports:
@@ -43,3 +43,23 @@ networks:
   public-network:
     driver: bridge
     external: true
+
+volumes:
+  nginx-html:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./nginx/html
+  nginx-certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./nginx/certs
+  nginx-private:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./nginx/private
