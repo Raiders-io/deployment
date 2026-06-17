@@ -440,34 +440,7 @@ document.getElementById('showFileForm').addEventListener('submit', async (e) => 
 	a.click();
 	window.URL.revokeObjectURL(url);
 });
-;
 
-// create lesson
-document.getElementById('createLessonForm').addEventListener('submit', async (e) => {
-	e.preventDefault();
-	const form = e.target;
-
-	if (!authToken) {
-		alert('Please login first !');
-		return;
-	}
-
-	const tagsList = document.getElementById('tags');
-	const selectedTags = [];
-	for (const tag of tagsList.querySelectorAll('input[type="checkbox"]:checked')) {
-		selectedTags.push(tag.value);
-	}
-	const res = await fetch('http://127.0.0.1:3333/lessons/', {
-		method: 'GET',
-		headers: { 'Content-Type': 'application/json' },
-	// 	body: JSON.stringify({
-	// 		title: form.title.value,
-	// 		tags: selectedTags,
-	// }),
-	});
-	const json = await res.text();
-	console.log('Response upload :', json);
-});
 </script>
 </body>
 </html>
