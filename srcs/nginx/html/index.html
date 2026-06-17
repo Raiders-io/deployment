@@ -134,6 +134,11 @@
 		<button type="submit">Submit</button>
 		</div>
 	</form>
+<div id="fileExplorer">
+	<div id="fileList">
+	    <!-- Les fichiers seront générés ici -->
+  	</div>
+</div>
 
 <h3>Show Specific File</h3>
 	<!-- Formulaire d'upload de fichiers -->
@@ -342,17 +347,7 @@ document.getElementById('deleteFileForm').addEventListener('submit', async (e) =
 	}
 
 	const form = e.target;
-
-	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${form.deleteFileName.value}`, {
-		method: 'DELETE',
-		headers: {
-			'Authorization': `Bearer ${authToken}`,
-		},
-	});
-
-	const json = await res.text();
-	console.log('Response delete :', json);
-	alert('File deleted successfully');
+	await deleteFile(form.fileName.value);
 });
 
 // Delete multiple files by names
@@ -392,22 +387,33 @@ document.getElementById('deleteMultipleFilesForm').addEventListener('submit', as
 
 // Index of files
 document.getElementById('indexFilesForm').addEventListener('submit', async (e) => {
-	e.preventDefault();
-	const form = e.target;
+    e.preventDefault();
+    
+    if (!authToken) {
+        alert('Please login first !');
+        return;
+    }
 
-	if (!authToken) {
-		alert('Please login first !');
-		return;
-	}
-
-	const res = await fetch('http://127.0.0.1:3334/storage/objects', {
-		method: 'GET',
-		headers: { 'Content-Type': 'application/json',
-					'Authorization': `Bearer ${authToken}`,
-		},
-	});
-	const json = await res.text();
-	console.log('Response upload :', json);
+    try {
+        const res = await fetch('http://127.0.0.1:3334/storage/objects', {
+            method: 'GET',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+            },
+        });
+        
+        const json = await res.json(); // Utilisez .json() au lieu de .text()
+        console.log('Response :', json);
+        
+        // Afficher les fichiers
+        displayFiles(json.objects);
+        
+    } catch (error) {
+        console.error('Erreur :', error);
+        document.getElementById('fileList').innerHTML = 
+            '<p style="color: red;">❌ Erreur lors du chargement des fichiers</p>';
+    }
 });
 
 // Show Specific File
@@ -419,8 +425,194 @@ document.getElementById('showFileForm').addEventListener('submit', async (e) => 
 		alert('Please login first !');
 		return;
 	}
+	await downloadFile(form.fileName.value);
+});
 
-	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${form.fileName.value}`, {
+// Fonction pour créer dynamiquement la liste des fichiers
+function displayFiles(files) {
+    const fileList = document.getElementById('fileList');
+    
+    if (!files || files.length === 0) {
+        fileList.innerHTML = '<p>📂 Aucun fichier trouvé</p>';
+        return;
+    }
+	let html = `<h4>📁 Explorateur de fichiers</h4>`;
+    html += `
+        <table class="file-table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Taille</th>
+                    <th>Type</th>
+                    <th>Visibilité</th>
+                    <th>Date de création</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+	total_size = Number(0);
+    files.forEach(file => {
+		total_size += Number(file.sizeBytes);
+        const size = formatFileSize(file.sizeBytes);
+        const date = formatDate(file.createdAt);
+
+		html += `
+            <tr>
+                <td class="file-name">
+                    <span class="file-icon">${getFileIcon(file.mimeType, file.name)}</span>
+                    ${file.name}
+                </td>
+                <td>${size}</td>
+                <td>${file.mimeType}</td>
+                <td>
+                    <span class="visibility-badge ${file.visibility}">
+                        ${file.visibility === 'private' ? '🔒' : '🌍'} ${file.visibility}
+                    </span>
+                </td>
+                <td>${date}</td>
+                <td>
+                    <button onclick="downloadFile('${file.name}')" class="btn-action">📥</button>
+                    <button onclick="deleteFile('${file.name}')" class="btn-action btn-danger">🗑️</button>
+                </td>
+            </tr>
+        `;
+    });
+
+	html += `
+		<tfoot>
+			<tr>
+				<td colspan="3">Total : ${files.length} fichier(s)</td>
+				<td colspan="3">Espace total utilisé : ${formatFileSize(total_size)}</td>
+			</tr>
+		</tfoot>`;
+
+    html += '</tbody></table>';
+    
+    fileList.innerHTML = html;
+}
+
+// Utilitaires
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function getFileIcon(mimeType) {
+    // Icônes par type MIME
+    const icons = {
+        'text': '📝',
+        'text/plain': '📝',
+        'text/html': '🌐',
+        'text/css': '🎨',
+        'text/javascript': '⚡',
+        'text/markdown': '📄',
+        'image': '🖼️',
+        'image/jpeg': '🖼️',
+        'image/png': '🖼️',
+        'image/gif': '🎭',
+        'image/svg+xml': '🔷',
+        'image/webp': '🖼️',
+        'audio': '🎵',
+        'audio/mpeg': '🎵',
+        'audio/wav': '🎵',
+        'audio/ogg': '🎵',
+        'video': '🎬',
+        'video/mp4': '🎬',
+        'video/webm': '🎬',
+        'application/pdf': '📕',
+        'application/json': '📋',
+        'application/xml': '📋',
+        'application/zip': '📦',
+        'application/gzip': '📦',
+        'application/x-tar': '📦',
+        'application/x-rar-compressed': '📦',
+        'application/x-7z-compressed': '📦',
+        'application/msword': '📘',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '📘',
+        'application/vnd.ms-excel': '📊',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '📊',
+        'application/vnd.ms-powerpoint': '📽️',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation': '📽️',
+        'application/javascript': '⚡',
+        'application/typescript': '⚡',
+        'application/wasm': '🔧',
+        'application/octet-stream': '📎',
+        'directory': '📁',
+        'folder': '📁',
+    };
+
+    // Vérification exacte du type MIME
+    if (icons[mimeType]) {
+        return icons[mimeType];
+    }
+
+    // Vérification par catégorie (première partie du type MIME)
+    const category = mimeType.split('/')[0];
+    if (icons[category]) {
+        return icons[category];
+    }
+
+    // Extension du fichier (fallback)
+    const extensionIcons = {
+        'js': '⚡',
+        'ts': '⚡',
+        'jsx': '⚛️',
+        'tsx': '⚛️',
+        'py': '🐍',
+        'java': '☕',
+        'cpp': '🔧',
+        'c': '🔧',
+        'h': '🔧',
+        'rs': '🦀',
+        'sh': '💻',
+        'bash': '💻',
+        'bat': '💻',
+        'ps1': '💻',
+        'yaml': '📋',
+        'yml': '📋',
+        'toml': '📋',
+        'conf': '⚙️',
+        'env': '🔐',
+        'gitignore': '🙈',
+        'dockerfile': '🐳',
+        'makefile': '🔨',
+        'md': '📄',
+        'txt': '📝',
+        'svg': '🔷',
+        'ico': '🔶',
+    };
+
+    // Essayer de trouver par extension
+    if (fileName) {
+        const extension = fileName.split('.').pop()?.toLowerCase();
+        if (extension && extensionIcons[extension]) {
+            return extensionIcons[extension];
+        }
+    }
+
+    // Icône par défaut si rien n'est trouvé
+    return '📄';
+}
+
+async function downloadFile(fileName) {
+	if (!fileName)
+		return;
+	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${fileName}`, {
 		method: 'GET',
 		headers: { 'Authorization': `Bearer ${authToken}` },
 	});
@@ -436,10 +628,26 @@ document.getElementById('showFileForm').addEventListener('submit', async (e) => 
 	const url = window.URL.createObjectURL(blob);
 	const a = document.createElement('a');
 	a.href = url;
-	a.download = `${form.fileName.value}`;
+	a.download = `${fileName}`;
 	a.click();
 	window.URL.revokeObjectURL(url);
-});
+}
+
+async function deleteFile(fileName) {
+	if (!fileName)
+		return;
+	
+	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${fileName}`, {
+		method: 'DELETE',
+		headers: {
+			'Authorization': `Bearer ${authToken}`,
+		},
+	});
+
+	const json = await res.text();
+	console.log('Response delete :', json);
+	alert('File deleted successfully');
+}
 
 </script>
 </body>
