@@ -55,18 +55,6 @@
 		<button type="submit">Get Profile</button>
 	</form>
 
-<h3>Upload Avatar</h3>
-	<!-- Formulaire d'upload d'avatar -->
-	<form id="avatarForm" enctype="multipart/form-data">
-		<div>
-		<label for="file">Choose file to upload</label><br>
-		<input type="file" id="avatar" name="avatar" multiple />
-		</div><br>
-		<div>
-		<button type="submit">Submit</button>
-		</div>
-	</form>
-
 <h3>Upload Files</h3>
 	<!-- Formulaire d'upload de fichiers -->
 	<form id="filesForm" enctype="multipart/form-data">
@@ -227,124 +215,31 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
 	console.log('Response profile :', json);
 });
 
-// Upload avatar
-document.getElementById('avatarForm').addEventListener('submit', async (e) => {
-	e.preventDefault();
-
-	if (!authToken) {
-		alert('Please login first !');
-		return;
-	}
-
-	const formData = new FormData();
-	const fileInput = document.getElementById('avatar');
-	for (const file of fileInput.files) {
-		formData.append('avatars[]', file); // avatars[] est le nom du type pour le validator
-	}
-
-	const res = await fetch('http://127.0.0.1:3334/profile/avatar', {
-		method: 'POST',
-		headers: { 'Authorization': `Bearer ${authToken}` },
-		body: formData,
-	});
-
-	const json = await res.text();
-	console.log('Response upload :', json);
-});
-
-
 // Upload files
 document.getElementById('filesForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 
-	if (!authToken) {
-		alert('Please login first !');
-		return;
-	}
-
 	const formData = new FormData();
-	const fileInput = document.getElementById('file');
-	for (const file of fileInput.files) {
-		formData.append('files[]', file); // files[] est le nom du type pour le validator
-	}
-
-	const res = await fetch('http://127.0.0.1:3334/storage/objects', {
-		method: 'POST',
-		headers: { 'Authorization': `Bearer ${authToken}` },
-		body: formData,
-	});
-
-	const json = await res.text();
-	console.log('Response upload :', json);
+	await uploadMultipleFiles(document.getElementById('file'));
 });
 
 // Update single file by name
 document.getElementById('updateFileForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 
-	if (!authToken) {
-		alert('Please login first !');
-		return;
-	}
-
-	const form = e.target;
-	const formData = new FormData();
-	const fileInput = document.getElementById('updateFile');
-	if (fileInput.files.length !== 1) {
-		alert('Please select exactly one file to update.');
-		return;
-	}
-	formData.append('file', fileInput.files[0]);
-
-	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${fileInput.files[0].name}`, {
-		method: 'PUT',
-		headers: {
-			'Authorization': `Bearer ${authToken}`,
-		},
-		body: formData,
-	});
-
-	const json = await res.text();
-	console.log('Response update :', json);
-	alert('File updated successfully');
+	await updateFile(document.getElementById('updateFile'));
 });
 
 // Update multiple files by their names
 document.getElementById('updateMultipleFilesForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 
-	if (!authToken) {
-		alert('Please login first !');
-		return;
-	}
-
-	const formData = new FormData();
-	const fileInput = document.getElementById('updateMultipleFiles');
-	for (const file of fileInput.files) {
-		formData.append('files[]', file);
-	}
-
-	const res = await fetch('http://127.0.0.1:3334/storage/objects/', {
-		method: 'PUT',
-		headers: {
-			'Authorization': `Bearer ${authToken}`,
-		},
-		body: formData,
-	});
-
-	const json = await res.text();
-	console.log('Response update :', json);
-	alert('Files updated successfully');
+	await updateMultipleFile(document.getElementById('updateMultipleFiles'));
 });
 
 // Delete single file by name
 document.getElementById('deleteFileForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
-
-	if (!authToken) {
-		alert('Please login first !');
-		return;
-	}
 
 	const form = e.target;
 	await deleteFile(form.fileName.value);
@@ -353,11 +248,6 @@ document.getElementById('deleteFileForm').addEventListener('submit', async (e) =
 // Delete multiple files by names
 document.getElementById('deleteMultipleFilesForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
-
-	if (!authToken) {
-		alert('Please login first !');
-		return;
-	}
 
 	const form = e.target;
 	const fileNames = form.deleteFileNames.value
@@ -369,21 +259,9 @@ document.getElementById('deleteMultipleFilesForm').addEventListener('submit', as
 		alert('Please enter at least one file name');
 		return;
 	}
-
-	const res = await fetch('http://127.0.0.1:3334/storage/objects/', {
-		method: 'DELETE',
-		headers: {
-			'Authorization': `Bearer ${authToken}`,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({ ids: fileNames }),
-	});
-
-	const json = await res.text();
-	console.log('Response delete :', json);
-	alert('Files deleted successfully');
+	console.log('Deleting files:', fileNames);
+	await deleteMultipleFiles(fileNames);
 });
-
 
 // Index of files
 document.getElementById('indexFilesForm').addEventListener('submit', async (e) => {
@@ -421,12 +299,94 @@ document.getElementById('showFileForm').addEventListener('submit', async (e) => 
 	e.preventDefault();
 	const form = e.target;
 
+	await downloadFile(form.fileName.value);
+});
+
+// Waits a fileInput from a document.getElementById()
+async function uploadMultipleFiles(fileInput) {
+	if (!fileInput) {
+		alert('Please add at least one file');
+		return;
+	}
 	if (!authToken) {
 		alert('Please login first !');
 		return;
 	}
-	await downloadFile(form.fileName.value);
-});
+
+	const formData = new FormData();
+	for (const file of fileInput.files) {
+		formData.append('files[]', file); // files[] est le nom du type pour le validator
+	}
+
+	const res = await fetch('http://127.0.0.1:3334/storage/objects', {
+		method: 'POST',
+		headers: { 'Authorization': `Bearer ${authToken}` },
+		body: formData,
+	});
+
+	const json = await res.text();
+	console.log('Response upload :', json);
+} 
+
+// Waits a fileInput from a document.getElementById()
+async function updateFile(fileInput) {
+	if (!fileInput) {
+		alert('Please add at least one file');
+		return;
+	}
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
+
+	if (fileInput.files.length !== 1) {
+		alert('Please select exactly one file to update.');
+		return;
+	}
+	const formData = new FormData();
+	formData.append('file', fileInput.files[0]);
+
+	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${fileInput.files[0].name}`, {
+		method: 'PUT',
+		headers: {
+			'Authorization': `Bearer ${authToken}`,
+		},
+		body: formData,
+	});
+
+	const json = await res.text();
+	console.log('Response update :', json);
+	alert('File updated successfully');
+} 
+
+// Waits a fileInput from a document.getElementById()
+async function updateMultipleFile(fileInput) {
+	if (!fileInput) {
+		alert('Please add at least one file');
+		return;
+	}
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
+
+	const formData = new FormData();
+	for (const file of fileInput.files) {
+		formData.append('files[]', file);
+	}
+
+	const res = await fetch('http://127.0.0.1:3334/storage/objects/', {
+		method: 'PUT',
+		headers: {
+			'Authorization': `Bearer ${authToken}`,
+		},
+		body: formData,
+	});
+
+	const json = await res.text();
+	console.log('Response update :', json);
+	alert('Files updated successfully');
+} 
 
 // Fonction pour créer dynamiquement la liste des fichiers
 function displayFiles(files) {
@@ -610,8 +570,14 @@ function getFileIcon(mimeType) {
 }
 
 async function downloadFile(fileName) {
-	if (!fileName)
+	if (!fileName) {
+		alert('Please enter a file name to download.');
 		return;
+	}
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
 	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${fileName}`, {
 		method: 'GET',
 		headers: { 'Authorization': `Bearer ${authToken}` },
@@ -634,9 +600,14 @@ async function downloadFile(fileName) {
 }
 
 async function deleteFile(fileName) {
-	if (!fileName)
+	if (!fileName) {
+		alert('Please enter a file name to delete.');
 		return;
-	
+	}
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
 	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${fileName}`, {
 		method: 'DELETE',
 		headers: {
@@ -647,6 +618,30 @@ async function deleteFile(fileName) {
 	const json = await res.text();
 	console.log('Response delete :', json);
 	alert('File deleted successfully');
+}
+
+// Waits a fileName Array
+async function deleteMultipleFiles(fileNames) {
+	if (!fileNames || fileNames.length === 0) {
+		alert('Please enter at least one file name');
+		return;
+	}
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
+	const res = await fetch('http://127.0.0.1:3334/storage/objects/', {
+		method: 'DELETE',
+		headers: {
+			'Authorization': `Bearer ${authToken}`,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ ids: fileNames }),
+	});
+
+	const json = await res.text();
+	console.log('Response delete :', json);
+	alert('Files deleted successfully');
 }
 
 </script>
