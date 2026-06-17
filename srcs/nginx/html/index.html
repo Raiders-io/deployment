@@ -141,7 +141,25 @@
 	</form>
 
 <script>
-	let authToken = null;
+	// Fonctions utilitaires pour les cookies
+	function setCookie(name, value, days = 7) {
+		const expires = new Date(Date.now() + days * 864e5).toUTCString();
+		document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Strict`;
+	}
+
+	function getCookie(name) {
+		return document.cookie.split('; ').reduce((r, v) => {
+			const parts = v.split('=');
+			return parts[0] === name ? decodeURIComponent(parts[1]) : r;
+		}, '');
+	}
+
+	function deleteCookie(name) {
+		document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+	}
+
+	// Récupération du token au chargement de la page
+	let authToken = getCookie('authToken') || null;
 
 // Object Storage API - Signup
 document.getElementById('signupForm').addEventListener('submit', async (e) => {
@@ -166,6 +184,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
 		return;
 	}
 	authToken = json.data.token;
+	setCookie('authToken', authToken);
 	console.log('Token récupéré :', authToken);
 	alert('Connected! You can now upload your avatar.');
 });
@@ -191,6 +210,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 		return;
 	}
 	authToken = json.data.token;
+	setCookie('authToken', authToken);
 	console.log('Token récupéré :', authToken);
 	alert('Connected! You can now upload your avatar.');
 });
