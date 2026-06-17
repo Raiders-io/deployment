@@ -29,15 +29,13 @@ h1 {
 
 h3 {
 	margin-bottom: 10px;
+	margin-top: 10px;
 }
 
 form {
 	display: inline-block;
 	max-width: 1200px;
 	margin: 0 auto;
-	margin-bottom: 30px;
-
-	/* padding-left: 80vh; */
 
 	padding: 10px 20px;
 	/* margin: 0 auto; */
