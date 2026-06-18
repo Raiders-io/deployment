@@ -15,16 +15,16 @@
 	<!-- Formulaire de login -->
 	<form id="signupForm">
 		<label for="fullName"><b>First Name</b></label>
-		<input type="text" placeholder="Enter First Name" name="fullName" required><br>
+		<input type="text" placeholder="Enter First Name" name="fullName" id="fullName" required><br>
 
 		<label for="email"><b>Email</b></label>
-		<input type="text" placeholder="Enter Email" name="email" required><br>
+		<input type="text" placeholder="Enter Email" name="email" id="email" autocomplete="email" required><br>
 		
 		<label for="password"><b>Password</b></label>
-		<input type="password" placeholder="Enter Password" name="password" required><br>
+		<input type="password" placeholder="Enter Password" name="password" id="password" required><br>
 		
 		<label for="passwordConfirmation"><b>Confirm Password</b></label>
-		<input type="password" placeholder="Confirm Password" name="passwordConfirmation" required><br>
+		<input type="password" placeholder="Confirm Password" name="passwordConfirmation" id="passwordConfirmation" required><br>
 		
 		<label>
 			<input type="checkbox" checked="checked" name="remember"> Remember me
@@ -37,10 +37,10 @@
 	<!-- Formulaire de login -->
 	<form id="loginForm">
 		<label for="email"><b>Email</b></label>
-		<input type="text" placeholder="Enter Email" name="email" required><br>
+		<input type="text" placeholder="Enter Email" name="email" id="email" autocomplete="email" required><br>
 		
 		<label for="password"><b>Password</b></label>
-		<input type="password" placeholder="Enter Password" name="password" required><br>
+		<input type="password" placeholder="Enter Password" name="password" id="password" required><br>
 		
 		<label>
 			<input type="checkbox" checked="checked" name="remember"> Remember me
@@ -84,7 +84,7 @@
 	<form id="deleteFileForm" enctype="multipart/form-data">
 		<div>
 		<label for="deleteFileName">File name to delete</label><br>
-		<input type="text" placeholder="Enter File Name" name="deleteFileName" required><br>
+		<input type="text" placeholder="Enter File Name" name="deleteFileName" id="deleteFileName" required><br>
 		</div><br>
 		<div>
 		<button type="submit">Submit</button>
