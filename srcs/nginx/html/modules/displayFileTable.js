@@ -1,3 +1,4 @@
+import { downloadFile, deleteFile, deleteMultipleFiles } from './forms.js';
 import { formatFileSize, formatDate, getFileIcon } from './utils.js';
 
 // Fonction pour créer dynamiquement la liste des fichiers
@@ -14,8 +15,8 @@ export function displayFiles(files) {
 		<form action="" method="get" class="ffile-actions">
 			<label for="selectAll">Select All</label>
 			<input type="checkbox" onclick="toggleSelectAll()"/>
-			<button type="button" onclick="downloadSelectedFiles()" class="btn-action">📥 Download Selected</button>	
-			<button type="button" onclick="deleteSelectedFiles()" class="btn-action btn-danger">🗑️ Delete Selected</button>	
+			<button type="button" data-action="downloadSelected" class="btn-action">📥 Download Selected</button>	
+			<button type="button" data-action="deleteSelected" class="btn-action btn-danger">🗑️ Delete Selected</button>	
 		`;
     html += `
         <table class="file-table">
@@ -42,7 +43,7 @@ export function displayFiles(files) {
 		html += `
             <tr id="table-file-${file.name}" >
 				<td class="file-selected">
-					<input type="checkbox" onclick="updateSelectedCount()"/>
+					<input type="checkbox" class="file-checkbox" data-file="${file.name}"/>
 				</td>
 				<td class="file-icon">${getFileIcon(file.mimeType, file.name)}</td>
                 <td class="file-name">${file.name}</td>
@@ -55,8 +56,8 @@ export function displayFiles(files) {
                 </td>
                 <td>${date}</td>
                 <td>
-                    <button type="button" onclick="downloadFile('${file.name}')" class="btn-action">📥</button>
-                    <button type="button" onclick="deleteFile('${file.name}')" class="btn-action btn-danger">🗑️</button>
+                    <button type="button" class="btn-action" data-action="download" data-file="${file.name}">📥</button>
+                    <button type="button" class="btn-action btn-danger" data-action="delete" data-file="${file.name}">🗑️</button>
                 </td>
             </tr>
         `;
@@ -72,15 +73,49 @@ export function displayFiles(files) {
 
     html += '</tbody></table></form>';
 
-    fileList.innerHTML = html;
+	fileList.innerHTML = html;
+	document.querySelector('#fileList input[type="checkbox"]').addEventListener('change', toggleSelectAll);
 }
+
+fileList.addEventListener('change', function (event) {
+	if (event.target.matches('.file-checkbox')) {
+		updateSelectedCount();
+	}
+});
+
+fileList.addEventListener('click', function(event) {
+    const button = event.target.closest('button');
+    if (!button) return;
+    
+    const action = button.dataset.action;
+    const fileName = button.dataset.file;
+    
+    // Ou utiliser un switch
+    switch(action) {
+        case 'download':
+            downloadFile(fileName);
+            break;
+        case 'delete':
+            if (confirm(`Supprimer ${fileName} ?`)) {
+                deleteFile(fileName);
+            }
+			break;
+		case 'downloadSelected':
+			downloadSelectedFiles();
+			break;
+		case 'deleteSelected':
+			deleteSelectedFiles();
+			break;
+        default:
+            console.warn('Action inconnue:', action);
+    }
+});
 
 export function updateSelectedCount() {
 	const checkboxes = document.querySelectorAll('#fileList tbody input[type="checkbox"]');
 	const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
 	document.getElementById('selectedCount').textContent = selectedCount;
 }
-window.updateSelectedCount = updateSelectedCount;
 
 export function toggleSelectAll() {
 	const selectAllCheckbox = document.querySelector('#fileList input[type="checkbox"]');
@@ -88,7 +123,6 @@ export function toggleSelectAll() {
 	checkboxes.forEach(cb => cb.checked = selectAllCheckbox.checked);
 	updateSelectedCount();
 }
-
 
 export function updateTotalFilesCount() {
 	const totalFiles = document.querySelectorAll('#fileList tbody tr');
@@ -158,7 +192,8 @@ export async function downloadSelectedFiles() {
 	}
 
 	for (const fileName of selectedFiles) {
-		await downloadFile(fileName);
+		console.log('Downloading file:', fileName);
+		downloadFile(fileName);
 	}
 }
 
