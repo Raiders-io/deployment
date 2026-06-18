@@ -422,8 +422,8 @@ function displayFiles(files) {
 		<form action="" method="get" class="ffile-actions">
 			<label for="selectAll">Select All</label>
 			<input type="checkbox" onclick="toggleSelectAll()"/>
-			<button onclick="downloadSelectedFiles()" class="btn-action">📥 Download Selected</button>	
-			<button onclick="deleteSelectedFiles()" class="btn-action btn-danger">🗑️ Delete Selected</button>	
+			<button type="button" onclick="downloadSelectedFiles()" class="btn-action">📥 Download Selected</button>	
+			<button type="button" onclick="deleteSelectedFiles()" class="btn-action btn-danger">🗑️ Delete Selected</button>	
 		`;
     html += `
         <table class="file-table">
@@ -448,13 +448,13 @@ function displayFiles(files) {
         const date = formatDate(file.createdAt);
 
 		html += `
-            <tr>
+            <tr id="table-file-${file.name}" >
 				<td class="file-selected">
 					<input type="checkbox" onclick="updateSelectedCount()"/>
 				</td>
 				<td class="file-icon">${getFileIcon(file.mimeType, file.name)}</td>
                 <td class="file-name">${file.name}</td>
-                <td>${size}</td>
+                <td class="file-size">${size}</td>
                 <td>${file.mimeType}</td>
                 <td>
                     <span class="visibility-badge ${file.visibility}">
@@ -463,19 +463,18 @@ function displayFiles(files) {
                 </td>
                 <td>${date}</td>
                 <td>
-                    <button onclick="downloadFile('${file.name}')" class="btn-action">📥</button>
-                    <button onclick="deleteFile('${file.name}')" class="btn-action btn-danger">🗑️</button>
+                    <button type="button" onclick="downloadFile('${file.name}')" class="btn-action">📥</button>
+                    <button type="button" onclick="deleteFile('${file.name}')" class="btn-action btn-danger">🗑️</button>
                 </td>
             </tr>
         `;
     });
-
 	html += `
 		<tfoot>
 			<tr>
 				<td colspan="2">Selected : <span id="selectedCount">0</span></td>
-				<td colspan="3">Total : ${files.length} fichier(s)</td>
-				<td colspan="3">Espace total utilisé : ${formatFileSize(total_size)}</td>
+				<td colspan="3" id="totalFiles">Total : ${files.length} fichier(s)</td>
+				<td colspan="3" id="totalFileSize">Espace total utilisé : ${formatFileSize(total_size)}</td>
 			</tr>
 		</tfoot>`;
 
@@ -662,7 +661,37 @@ async function deleteFile(fileName) {
 
 	const json = await res.text();
 	console.log('Response delete :', json);
-	alert('File deleted successfully');
+	deleteTableRow(fileName);
+	// alert('File deleted successfully');
+}
+
+function deleteTableRow(fileName) {
+	if (!fileName) {
+		return;
+	}
+	const row = document.getElementById(`table-file-${fileName}`);
+	if (!row) {
+		return ;
+	}
+	row.remove();
+	updateSelectedCount();
+	updateTotalFilesCount();
+	updateTotalSize();
+}
+
+function deleteTableRows(fileNames) {
+	if (!fileNames || fileNames.length === 0) {
+		return;
+	}
+	for (const fileName of fileNames) {
+		const row = document.getElementById(`table-file-${fileName}`);
+		if (row) {
+			row.remove();
+		}
+	}
+	updateSelectedCount();
+	updateTotalFilesCount();
+	updateTotalSize();
 }
 
 // Waits a fileName Array
@@ -686,7 +715,32 @@ async function deleteMultipleFiles(fileNames) {
 
 	const json = await res.text();
 	console.log('Response delete :', json);
-	alert('Files deleted successfully');
+	deleteTableRows(fileNames);
+	// alert('Files deleted successfully');
+}
+
+function updateTotalFilesCount() {
+	const totalFiles = document.querySelectorAll('#fileList tbody tr');
+	if (!totalFiles)
+		return;
+	document.getElementById('totalFiles').textContent = `Total : ${totalFiles.length} fichier(s)`;
+}
+
+function updateTotalSize() {
+	const item = document.getElementById('totalFileSize');
+	if (!item)
+		return;
+	const rows = document.querySelectorAll('#fileList tbody tr');
+	if (!rows)
+		return;
+	let totalSize = 0;
+	rows.forEach(row => {
+		const sizeCell = row.getElementsByClassName('file-size');
+		if (sizeCell && sizeCell[0]) {
+			totalSize += parseInt(sizeCell[0].textContent);
+		}
+	});
+	item.textContent = `Espace total utilisé : ${formatFileSize(totalSize)}`;
 }
 
 async function downloadSelectedFiles() {
