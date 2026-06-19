@@ -6,7 +6,7 @@ import http from "http";
 const app: Application = express();
 const PORT: number = Number(process.env.PORT) || 3000;
 const MESSAGING_SERVICE_URL: string =
-  process.env.MESSAGING_SERVICE_URL || "http://messaging-service:3334";
+  process.env.MESSAGING_SERVICE_URL || "http://messaging-service:3335";
 const AUTH_SERVICE_URL: string =
   process.env.AUTH_SERVICE_URL || "http://auth-service:3333";
 
