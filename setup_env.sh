@@ -14,6 +14,8 @@ create_env()
 		else
 			cp .env.example .env
 		fi
+	else
+		cp .env.example .env
 	fi
 
 	echo "Please replace the placeholder values in the .env file with your actual configuration."
