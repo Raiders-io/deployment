@@ -268,3 +268,19 @@ caption {
   caption-side: bottom;
   padding: 10px;
 }
+
+.page-button {
+  background-color: #00c2c9;
+  color: white;
+  border: none;
+  padding: 5px;
+  margin: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.beforeTable {
+  display: flex;
+  justify-content: space-between; /* ou space-between */
+  align-items: center; /* pour centrer verticalement */
+}
