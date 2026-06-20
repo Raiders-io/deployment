@@ -11,10 +11,10 @@ all:
 	@$(MAKE) $(NAME)
 
 $(NAME):
+	@$(MAKE) network
 	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
 
 build-all:
-	docker network create public-network || true
 	@$(MAKE) $(NAME)
 	@$(MAKE) build-ObjectStorage
 	@$(MAKE) build-Backend-Auth-Service
@@ -40,6 +40,9 @@ launch-Frontend:
 env:
 	@chmod +x ./setup_env.sh
 	@./setup_env.sh
+
+network:
+	docker network create public-network || true
 
 up:
 	docker compose -f srcs/compose.yml up -d
