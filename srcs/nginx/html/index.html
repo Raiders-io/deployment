@@ -258,6 +258,13 @@ document.getElementById('quotasForm').addEventListener('submit', async (e) => {
                 'Authorization': `Bearer ${authToken}`,
             },
         });
+
+		if (res.ok === false) {
+			const errorBody = await res.text();
+			console.error('Quota error :', errorBody);
+			alert(`Failed to fetch quotas (${res.status})`);
+			return;
+		}
         
         const json = await res.json();
         console.log('Response :', json);
