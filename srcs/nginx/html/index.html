@@ -474,25 +474,51 @@ function displayQuota(quota) {
 		</table>`;
 	html += `<br>`;
 	html += `
-		<table class="quota-table-count">
+		<table class="quota-table-count-upload">
+			<thead>
+				<tr>
+					<th>Total Upload count</th>
+					<th>Upload count limit</th>
+					<th>Time for upload count reset</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>${quota.uploadCount}</td>
+					<td>${quota.uploadCountLimit}</td>
+					<td>${formatDate(quota.uploadCountResetAt)}</td>
+				</tr>
+			</tbody>
+			</table>`;
+	html += `<br>`;
+	html += `
+		<table class="quota-table-count-download">
 			<thead>
 				<tr>
 					<th>Total Download count</th>
 					<th>Download count limit</th>
-					<th>Total Upload count</th>
-					<th>Upload count limit</th>
 					<th>Time for download count reset</th>
-					<th>Time for upload count reset</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td>${quota.downloadCount}</td>
 					<td>${quota.downloadCountLimit}</td>
-					<td>${quota.uploadCount}</td>
-					<td>${quota.uploadCountLimit}</td>
 					<td>${formatDate(quota.downloadCountResetAt)}</td>
-					<td>${formatDate(quota.uploadCountResetAt)}</td>
+				</tr>
+			</tbody>
+		</table>`;
+	html += `<br>`;
+	html += `
+		<table class="quota-table-count-update">
+			<thead>
+				<tr>
+					<th>Quota Updated At</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>${quota.updatedAt}</td>
 				</tr>
 			</tbody>
 		</table>`;
