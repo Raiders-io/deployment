@@ -55,6 +55,18 @@
 		<button type="submit">Get Profile</button>
 	</form>
 
+<h3>Retrieve Quotas</h3>
+	<!-- Formulaire de récupération des quotas -->
+	<form id="quotasForm">
+		<button type="submit">Get Quotas</button>
+	</form>
+	<div id="quotaExplorer">
+		<div id="quotaList">
+	    	<!-- Les fichiers seront générés ici -->
+  		</div>
+	</div>
+
+
 <h3>Upload Files</h3>
 	<!-- Formulaire d'upload de fichiers -->
 	<form id="filesForm" enctype="multipart/form-data">
@@ -235,6 +247,31 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
 	console.log('Response profile :', json);
 });
 
+// Retrieve Quotas
+document.getElementById('quotasForm').addEventListener('submit', async (e) => {
+	e.preventDefault();
+
+	try {
+        const res = await fetch('http://127.0.0.1:3334/quota', {
+            method: 'GET',
+            headers: { 
+                'Authorization': `Bearer ${authToken}`,
+            },
+        });
+        
+        const json = await res.json();
+        console.log('Response :', json);
+        
+        // Afficher les quotas
+        displayQuota(json);
+        
+    } catch (error) {
+        console.error('Erreur :', error);
+        document.getElementById('quotaList').innerHTML = 
+            '<p style="color: red;">❌ Erreur lors du chargement des quotas</p>';
+    }
+});
+
 // Upload files
 document.getElementById('filesForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
@@ -301,7 +338,7 @@ document.getElementById('indexFilesForm').addEventListener('submit', async (e) =
             },
         });
         
-        const json = await res.json(); // Utilisez .json() au lieu de .text()
+        const json = await res.json();
         console.log('Response :', json);
         
         // Afficher les fichiers
@@ -406,7 +443,61 @@ async function updateMultipleFile(fileInput) {
 	const json = await res.text();
 	console.log('Response update :', json);
 	alert('Files updated successfully');
-} 
+}
+
+function displayQuota(quota) {
+	const quotaList = document.getElementById('quotaList');
+	
+	if (!quota) {
+		quotaList.innerHTML = '<p>📂 Aucun quota trouvé</p>';
+		return;
+	}
+	let html = `<h4>📁 Quotas</h4>`;
+	html += `
+		<table class="quota-table-storage">
+			<thead>
+				<tr>
+					<th>Storage used</th>
+					<th>Storage Limit</th>
+					<th>Total Objects count</th>
+					<th>Objects count limit</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>${formatFileSize(quota.storageBytes)}</td>
+					<td>${formatFileSize(quota.storageBytesLimit)}</td>
+					<td>${quota.objectCount}</td>
+					<td>${quota.objectCountLimit}</td>
+				</tr>
+			</tbody>
+		</table>`;
+	html += `<br>`;
+	html += `
+		<table class="quota-table-count">
+			<thead>
+				<tr>
+					<th>Total Download count</th>
+					<th>Download count limit</th>
+					<th>Total Upload count</th>
+					<th>Upload count limit</th>
+					<th>Time for download count reset</th>
+					<th>Time for upload count reset</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>${quota.downloadCount}</td>
+					<td>${quota.downloadCountLimit}</td>
+					<td>${quota.uploadCount}</td>
+					<td>${quota.uploadCountLimit}</td>
+					<td>${formatDate(quota.downloadCountResetAt)}</td>
+					<td>${formatDate(quota.uploadCountResetAt)}</td>
+				</tr>
+			</tbody>
+		</table>`;
+	quotaList.innerHTML = html;
+}
 
 // Fonction pour créer dynamiquement la liste des fichiers
 function displayFiles(files) {
