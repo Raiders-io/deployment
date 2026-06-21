@@ -178,7 +178,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	const form = e.target;
 
-	const res = await fetch('http://127.0.0.1:3334/api/v1/auth/signup', {
+	const res = await fetch('https://127.0.0.1:4443/api/v1/storage/auth/signup', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
@@ -198,7 +198,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
 	authToken = json.data.token;
 	setCookie('authToken', authToken);
 	console.log('Token récupéré :', authToken);
-	alert('Connected! You can now upload your avatar.');
+	alert('Connected! You are now registered and logged in.');
 });
 
 // Object Storage API - Login
@@ -206,7 +206,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	const form = e.target;
 
-	const res = await fetch('http://127.0.0.1:3334/api/v1/auth/login', {
+	const res = await fetch('https://127.0.0.1:4443/api/v1/storage/auth/login', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
@@ -224,7 +224,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 	authToken = json.data.token;
 	setCookie('authToken', authToken);
 	console.log('Token récupéré :', authToken);
-	alert('Connected! You can now upload your avatar.');
+	alert('Connected! You are now logged in.');
 });
 
 // Object Storage API - get profile
@@ -237,7 +237,7 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
 		return;
 	}
 
-	const res = await fetch('http://127.0.0.1:3334/api/v1/account/profile', {
+	const res = await fetch('https://127.0.0.1:4443/api/v1/storage/account/profile', {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${authToken}`,
@@ -252,7 +252,7 @@ document.getElementById('quotasForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 
 	try {
-        const res = await fetch('http://127.0.0.1:3334/quota', {
+        const res = await fetch('https://127.0.0.1:4443/api/v1/storage/quota', {
             method: 'GET',
             headers: { 
                 'Authorization': `Bearer ${authToken}`,
@@ -345,7 +345,7 @@ async function fetchFiles(page = 1, limit = 10) {
 	}
 
 	try {
-        const res = await fetch(`http://127.0.0.1:3334/storage/objects/?page=${page}&limit=${limit}`, {
+        const res = await fetch(`https://127.0.0.1:4443/api/v1/storage/objects/?page=${page}&limit=${limit}`, {
             method: 'GET',
             headers: { 
                 'Content-Type': 'application/json',
@@ -390,7 +390,7 @@ async function uploadMultipleFiles(fileInput) {
 		formData.append('files[]', file); // files[] est le nom du type pour le validator
 	}
 
-	const res = await fetch('http://127.0.0.1:3334/storage/objects', {
+	const res = await fetch('https://127.0.0.1:4443/api/v1/storage/objects', {
 		method: 'POST',
 		headers: { 'Authorization': `Bearer ${authToken}` },
 		body: formData,
@@ -418,7 +418,7 @@ async function updateFile(fileInput) {
 	const formData = new FormData();
 	formData.append('file', fileInput.files[0]);
 
-	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${fileInput.files[0].name}`, {
+	const res = await fetch(`https://127.0.0.1:4443/api/v1/storage/objects/${fileInput.files[0].name}`, {
 		method: 'PUT',
 		headers: {
 			'Authorization': `Bearer ${authToken}`,
@@ -447,7 +447,7 @@ async function updateMultipleFile(fileInput) {
 		formData.append('files[]', file);
 	}
 
-	const res = await fetch('http://127.0.0.1:3334/storage/objects/', {
+	const res = await fetch('https://127.0.0.1:4443/api/v1/storage/objects/', {
 		method: 'PUT',
 		headers: {
 			'Authorization': `Bearer ${authToken}`,
@@ -673,7 +673,7 @@ function toggleSelectAll() {
 
 // Utilitaires
 function formatFileSize(bytes) {
-    if (bytes === 0) return '0 B';
+    if (bytes === 0 || isNaN(bytes) || bytes == "0") return '0 B';
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -797,7 +797,7 @@ async function downloadFile(fileName) {
 		alert('Please login first !');
 		return;
 	}
-	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${fileName}`, {
+	const res = await fetch(`https://127.0.0.1:4443/api/v1/storage/objects/${fileName}`, {
 		method: 'GET',
 		headers: { 'Authorization': `Bearer ${authToken}` },
 	});
@@ -827,7 +827,7 @@ async function deleteFile(fileName) {
 		alert('Please login first !');
 		return;
 	}
-	const res = await fetch(`http://127.0.0.1:3334/storage/objects/${fileName}`, {
+	const res = await fetch(`https://127.0.0.1:4443/api/v1/storage/objects/${fileName}`, {
 		method: 'DELETE',
 		headers: {
 			'Authorization': `Bearer ${authToken}`,
@@ -879,7 +879,7 @@ async function deleteMultipleFiles(fileNames) {
 		alert('Please login first !');
 		return;
 	}
-	const res = await fetch('http://127.0.0.1:3334/storage/objects/', {
+	const res = await fetch('https://127.0.0.1:4443/api/v1/storage/objects/', {
 		method: 'DELETE',
 		headers: {
 			'Authorization': `Bearer ${authToken}`,

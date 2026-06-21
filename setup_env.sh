@@ -35,7 +35,6 @@ configure_nginx()
 {
 	cd srcs
 	export $(grep OPENSSL_SUBJ .env)
-	export $(grep URL .env)
 	cd nginx/
 	chmod +x ./generate_certs.sh
 	chmod +x ./set_server_name.sh

@@ -43,6 +43,7 @@ env:
 
 network:
 	docker network create public-network || true
+	docker network create --internal api-network || true
 
 up:
 	docker compose -f srcs/compose.yml up -d
