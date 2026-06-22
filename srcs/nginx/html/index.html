@@ -72,7 +72,7 @@
 	<form id="filesForm" enctype="multipart/form-data">
 		<div>
 		<label for="file">Choose file(s) to upload</label><br>
-		<input type="file" id="file" name="file" multiple />
+		<input type="file" id="file" name="file" multiple accept=".md,.txt,.pdf,.tex"/>
 		</div><br>
 		<div>
 		<button type="submit">Submit</button>
@@ -84,7 +84,7 @@
 	<form id="updateFileForm" enctype="multipart/form-data">
 		<div>
 		<label for="updateFile">Choose new file</label><br>
-		<input type="file" id="updateFile" name="updateFile" required />
+		<input type="file" id="updateFile" name="updateFile" required accept=".md,.txt,.pdf,.tex"/>
 		</div><br>
 		<div>
 		<button type="submit">Submit</button>
@@ -108,7 +108,7 @@
 	<form id="updateMultipleFilesForm" enctype="multipart/form-data">
 		<div>
 		<label for="updateMultipleFiles">Choose new file(s)</label><br>
-		<input type="file" id="updateMultipleFiles" name="updateMultipleFiles" multiple required />
+		<input type="file" id="updateMultipleFiles" name="updateMultipleFiles" multiple required accept=".md,.txt,.pdf,.tex"/>
 		</div><br>
 		<div>
 		<button type="submit">Submit</button>
