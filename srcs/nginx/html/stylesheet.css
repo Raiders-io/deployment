@@ -16,6 +16,12 @@ header{
 	padding: 0.5rem 1rem;
 }
 
+progress {
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+}
+
 header > img{
 	height: 50px;
 	width: auto;

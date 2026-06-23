@@ -18,6 +18,11 @@
 	</nav>
 </header>
 
+
+<!-- <div class="progress-container"> -->
+	<progress id="progressBar" class="progress-bar" max="100" value="70">70%</progress>
+<!-- </div> -->
+
 <h2>Object Storage API</h2>
 <h3>POST Signup</h3>
 	<!-- Formulaire de login -->
@@ -166,6 +171,30 @@
 </footer>
 
 <script>
+	const progressBar = document.getElementById('progressBar');
+
+	// Fonction pour mettre à jour la barre
+	function updateProgressBar() {
+		// Hauteur totale de la page (incluant le contenu non visible)
+		const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+		
+		// Position actuelle du défilement
+		const scrollPosition = window.scrollY;
+		
+		// Calculer le pourcentage (éviter division par zéro)
+		const progress = totalHeight > 0 ? (scrollPosition / totalHeight) * 100 : 0;
+		
+		// Mettre à jour la largeur de la barre
+		progressBar.value = progress;
+		progressBar.textContent = `${Math.round(progress)}%`;
+	}
+
+	// Écouter l'événement 'scroll' sur la fenêtre
+	window.addEventListener('scroll', updateProgressBar);
+
+	// Appeler une fois au chargement pour initialiser
+	updateProgressBar();
+
 	// Fonctions utilitaires pour les cookies
 	function setCookie(name, value, days = 7) {
 		const expires = new Date(Date.now() + days * 864e5).toUTCString();
