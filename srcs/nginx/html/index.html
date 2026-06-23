@@ -183,9 +183,6 @@
 		document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 	}
 
-	// Récupération du token au chargement de la page
-	let authToken = getCookie('authToken') || null;
-
 // Object Storage API - Signup
 document.getElementById('signupForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
@@ -208,7 +205,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
 		alert('Signup failed: ' + (json.message || 'Unknown error'));
 		return;
 	}
-	authToken = json.data.token;
+	const authToken = json.data.token;
 	setCookie('authToken', authToken);
 	console.log('Token récupéré :', authToken);
 	alert('Connected! You are now registered and logged in.');
@@ -219,9 +216,13 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	const form = e.target;
 
+	let authToken = getCookie('authToken') || null;
 	const res = await fetch('https://127.0.0.1:4443/api/v1/storage/auth/login', {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: { 
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${authToken}`
+		},
 		body: JSON.stringify({
 			email: form.email.value,
 			password: form.password.value,
@@ -231,7 +232,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 	const json = await res.json();
 	if (!res.ok) {
 		console.error('Login error :', json);
-		alert('Login failed: ' + (json.message || 'Unknown error'));
+		alert('Login failed: ' + (json.error || 'Unknown error'));
 		return;
 	}
 	authToken = json.data.token;
@@ -244,7 +245,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 document.getElementById('profileForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	const form = e.target;
-
+	const authToken = getCookie('authToken') || null;
 	if (!authToken) {
 		alert('Please login first !');
 		return;
@@ -263,6 +264,11 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
 // Retrieve Quotas
 document.getElementById('quotasForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
+	const authToken = getCookie('authToken') || null;
+	if (!authToken) {
+		alert('Please login first !');
+		return;
+	}
 
 	try {
         const res = await fetch('https://127.0.0.1:4443/api/v1/storage/quota', {
@@ -343,15 +349,11 @@ document.getElementById('deleteMultipleFilesForm').addEventListener('submit', as
 // Index of files
 document.getElementById('indexFilesForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
-    if (!authToken) {
-        alert('Please login first !');
-        return;
-    }
     await fetchFiles();
 });
 
 async function fetchFiles(page = 1, limit = 10) {
+	const authToken = getCookie('authToken') || null;
 	if (!authToken) {
 		alert('Please login first !');
 		return;
@@ -393,6 +395,7 @@ async function uploadMultipleFiles(fileInput) {
 		alert('Please add at least one file');
 		return;
 	}
+	const authToken = getCookie('authToken') || null;
 	if (!authToken) {
 		alert('Please login first !');
 		return;
@@ -419,6 +422,7 @@ async function updateFile(fileInput) {
 		alert('Please add at least one file');
 		return;
 	}
+	const authToken = getCookie('authToken') || null;
 	if (!authToken) {
 		alert('Please login first !');
 		return;
@@ -450,6 +454,7 @@ async function updateMultipleFile(fileInput) {
 		alert('Please add at least one file');
 		return;
 	}
+	const authToken = getCookie('authToken') || null;
 	if (!authToken) {
 		alert('Please login first !');
 		return;
@@ -806,6 +811,7 @@ async function downloadFile(fileName) {
 		alert('Please enter a file name to download.');
 		return;
 	}
+	const authToken = getCookie('authToken') || null;
 	if (!authToken) {
 		alert('Please login first !');
 		return;
@@ -836,6 +842,7 @@ async function deleteFile(fileName) {
 		alert('Please enter a file name to delete.');
 		return;
 	}
+	const authToken = getCookie('authToken') || null;
 	if (!authToken) {
 		alert('Please login first !');
 		return;
@@ -888,6 +895,7 @@ async function deleteMultipleFiles(fileNames) {
 		alert('Please enter at least one file name');
 		return;
 	}
+	const authToken = getCookie('authToken') || null;
 	if (!authToken) {
 		alert('Please login first !');
 		return;
