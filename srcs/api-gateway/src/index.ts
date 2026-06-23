@@ -7,22 +7,19 @@ const app: Application = express();
 const PORT: number = Number(process.env.PORT) || 3000;
 const MESSAGING_SERVICE_URL: string =
   process.env.MESSAGING_SERVICE_URL || "http://messaging-service:3335";
-// const AUTH_SERVICE_URL: string =
-//   process.env.AUTH_SERVICE_URL || "http://auth-service:3333";
+const AUTH_SERVICE_URL: string =
+  process.env.AUTH_SERVICE_URL || "http://auth-service:3333";
 
 const OBJ_SERVICE_URL: string =
   process.env.OBJ_SERVICE_URL || "http://object-api:3333";
 
 const messagingProxy = createProxyMiddleware({
-  target: MESSAGING_SERVICE_URL,
-  pathFilter: "/socket.io/**",
-  changeOrigin: true,
-  ws: true,
-});
-
-app.use("/test", (req, res) => {
-  res.send("test route");
-});
+	target: MESSAGING_SERVICE_URL,
+	changeOrigin: true,
+	ws: true,
+	pathFilter: (pathname: string) =>
+		pathname.startsWith('/socket.io') || pathname.startsWith('/messaging'),
+})
 
 app.use(
   createProxyMiddleware({
@@ -32,13 +29,8 @@ app.use(
   }),
 );
 
-// app.use(
-//   createProxyMiddleware({
-//     target: AUTH_SERVICE_URL,
-//     pathFilter: "/auth/**",
-//     changeOrigin: true,
-//   }),
-// );
+app.use(createProxyMiddleware({ target: AUTH_SERVICE_URL, pathFilter: '/auth/**', changeOrigin: true }));
+app.use(messagingProxy)
 
 app.use(messagingProxy);
 
