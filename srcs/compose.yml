@@ -10,7 +10,7 @@ services:
       - nginx-private:/etc/ssl/private:ro
     networks:
       - public-network
-      - api-network
+      - gateway-network
     ports:
       - "4443:443"
     depends_on:
@@ -38,9 +38,13 @@ services:
       - "3000:3000"
     networks:
       - api-network
+      - gateway-network
     restart: always
 
 networks:
+  gateway-network:
+    driver: bridge
+    internal: true
   public-network:
     driver: bridge
     external: true
