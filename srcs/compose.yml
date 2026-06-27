@@ -11,8 +11,9 @@ services:
     networks:
       - public-network
       - gateway-network
+      # - monitoring-network
     ports:
-      - "4443:443"
+      - "443:443"
     depends_on:
       api-gateway:
         condition: service_started
@@ -41,6 +42,53 @@ services:
       - gateway-network
     restart: always
 
+## DevOps
+# Visualization tool for monitoring and analytics
+#   grafana:
+#     image: grafana/grafana:13.0.1
+#     container_name: grafana
+#     environment:
+#       GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL:?}
+#       GF_SERVER_SERVE_FROM_SUB_PATH: ${GF_SERVER_SERVE_FROM_SUB_PATH:?}
+#       GF_SERVER_HTTP_PORT: ${GF_SERVER_HTTP_PORT:?}
+#     ports:
+#       - '${GRAFANA_PORT:?}:${GF_SERVER_HTTP_PORT:?}'
+#     volumes:
+#       - grafana-storage:/var/lib/grafana
+#     networks:
+#       - monitoring-network
+#     restart: unless-stopped
+
+# # Data collection for monitoring system
+#   prometheus:
+#     image: prom/prometheus:v3.11.2-distroless
+#     container_name: prometheus
+#     command:
+#       - '--web.listen-address=:9090'
+#       - '--config.file=/prometheus.yml'
+#     ports:
+#       - '${PROMETHEUS_PORT:?}:9090' #default port is 9090
+#     volumes:
+#       - prometheus-storage:/etc/prometheus/
+#       - ./prometheus.config.yml:/prometheus.yml
+#     networks:
+#       - monitoring-network
+#     restart: unless-stopped
+
+# # Data collection for monitoring system
+#   nginx-prometheus-exporter:
+#     image: nginx/nginx-prometheus-exporter:1.5.1
+#     container_name: nginx-prometheus-exporter
+#     command:
+#       - '--nginx.scrape-uri=https://nginx/nginx_status'
+#       - '--web.listen-address=:9113'
+#       - '--no-nginx.ssl-verify'
+#     ports:
+#       - '9113:9113'
+#     networks:
+#       - monitoring-network
+#     restart: unless-stopped
+
 networks:
   gateway-network:
     driver: bridge
@@ -51,6 +99,9 @@ networks:
   api-network:
     driver: bridge
     external: true
+  # monitoring-network:
+  #   driver: bridge
+  #   internal: true
 
 volumes:
   nginx-html:
@@ -71,3 +122,5 @@ volumes:
       type: none
       o: bind
       device: ./nginx/private
+  # prometheus-storage:
+  # grafana-storage:

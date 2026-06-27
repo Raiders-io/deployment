@@ -23,7 +23,7 @@ build-all:
 # 	@$(MAKE) build-Backend-Lesson
 
 build-ObjectStorage:
-	cd ../ObjectStorage && docker compose -f compose.yml up -d --build --force-recreate --remove-orphans
+	cd ../ObjectStorage && $(MAKE) all
 
 build-Backend-Lesson:
 	cd ../Backend-Lesson && docker compose -f docker-compose.yml up -d --build --force-recreate --remove-orphans
@@ -47,9 +47,15 @@ network:
 
 up:
 	docker compose -f srcs/compose.yml up -d
-
+	
 down:
-	docker compose -f srcs/compose.yml down
+	docker compose -f srcs/compose.yml down -v
+
+monitoring:
+	cd srcs/nginx/ && ./use_monitoring.sh yes
+
+no-monitoring:
+	cd srcs/nginx/ && ./use_monitoring.sh no
 
 ls: list
 list:
@@ -60,7 +66,6 @@ status:
 
 status-all:
 	docker ps -a
-
 
 stop-all:
 	docker stop $(shell docker ps -q)
