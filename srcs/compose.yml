@@ -13,7 +13,7 @@ services:
       - gateway-network
       # - monitoring-network
     ports:
-      - "443:443"
+      - "4443:443"
     depends_on:
       api-gateway:
         condition: service_started

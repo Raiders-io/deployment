@@ -14,12 +14,12 @@ const OBJ_SERVICE_URL: string =
   process.env.OBJ_SERVICE_URL || "http://object-api:3333";
 
 const messagingProxy = createProxyMiddleware({
-	target: MESSAGING_SERVICE_URL,
-	changeOrigin: true,
-	ws: true,
-	pathFilter: (pathname: string) =>
-		pathname.startsWith('/socket.io') || pathname.startsWith('/messaging'),
-})
+  target: MESSAGING_SERVICE_URL,
+  changeOrigin: true,
+  ws: true,
+  pathFilter: (pathname: string) =>
+    pathname.startsWith("/socket.io") || pathname.startsWith("/messaging"),
+});
 
 app.use(
   createProxyMiddleware({
@@ -32,7 +32,9 @@ app.use(
 app.use(
   createProxyMiddleware({
     target: AUTH_SERVICE_URL,
-    pathFilter: (pathname: string) => pathname.startsWith("/auth"),
+    pathFilter: (pathname: string) =>
+      pathname.startsWith("/api/v1/auth") ||
+      pathname.startsWith("/api/v1/account"),
     changeOrigin: true,
   }),
 );
