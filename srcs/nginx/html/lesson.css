@@ -1,0 +1,146 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+div nav{
+	/* position: sticky;
+	top: 0;
+	z-index: 1000; */
+	display: flex;
+	flex-direction: column	;
+	justify-content: flex-start;
+	background-color: white;
+	border-bottom: solid black 3px;
+	padding: 0.5rem 1rem;
+}
+
+header > img{
+	height: 50px;
+	width: auto;
+}
+
+div {
+  /* width: 100px; */
+  /* height: 100px; */
+  margin: 0 1rem;
+  overflow: auto;
+}
+
+div.lesson-box{
+	display: flex;
+	flex-direction: row;
+	flex: 1;
+	/* justify-content: center; */
+	justify-content: stretch;
+	align-items: center;
+	padding: 20px;
+}
+
+div.lesson-content {
+	min-width: 50vh;
+	max-width: 100vh;
+}
+
+div.exam-content {
+	width: auto;
+}
+
+div.both {
+  resize: both;
+  background: #EF476F;
+}
+
+div.horizontal {
+  resize: horizontal;
+  background: #FFD166;
+}
+
+div.vertical {
+  resize: vertical;
+  background: #06D6A0;
+}
+
+footer{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	margin: 20px 0px;
+	padding: 0.5rem 2rem;
+	background-color: white;
+	color: black;
+}
+
+footer > a {
+	padding: 10px 10px;
+	background-color: white;
+	color: black;
+}
+
+footer > img {
+	height: 50px;
+	width: auto;
+}
+
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	min-height: 100vh;
+	padding: 40px 20px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+h1 {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	text-align: center;
+	color: #333;
+	margin-bottom: 10px;
+	font-size: 2.5em;
+}
+
+h3 {
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+form {
+	display: inline-block;
+	max-width: 1200px;
+	margin: 0 auto;
+
+	padding: 10px 20px;
+	/* margin: 0 auto; */
+	background: rgba(255, 255, 255, 0.95);
+	border-radius: 20px;
+	box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.favicon {
+	width: 32px;
+	height: 32px;
+	object-fit: contain;
+	display: inline-block;
+}
+
+.subtitle {
+	text-align: center;
+	color: #666;
+	margin-bottom: 30px;
+	font-size: 1.1em;
+}
+
+/* Grille Flexbox 4 colonnes */
+.grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	margin-bottom: 30px;
+}
