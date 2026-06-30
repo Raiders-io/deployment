@@ -18,9 +18,13 @@
 	</nav>
 </header>
 
-<h2>Object Storage API</h2>
+<h2>Auth API</h2>
+<h3>POST Github Signup and Login</h3>
+	<a id="githubRedirect" href="https://127.0.0.1:4443/api/v1/auth/github/redirect?redirect=/">Signup via Github</a>
+
+
 <h3>POST Signup</h3>
-	<!-- Formulaire de login -->
+	<!-- Formulaire de Signup -->
 	<form id="signupForm">
 		<label for="fullName"><b>First Name</b></label>
 		<input type="text" placeholder="Enter First Name" name="fullName" id="fullName" required><br>
@@ -63,6 +67,7 @@
 		<button type="submit">Get Profile</button>
 	</form>
 
+<h2>Object Storage API</h2>
 <h3>Retrieve Quotas</h3>
 	<!-- Formulaire de récupération des quotas -->
 	<form id="quotasForm">
@@ -182,6 +187,19 @@
 	function deleteCookie(name) {
 		document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 	}
+
+function handleGitHubCallback() {
+    const url = window.location.href;
+	const tokenMatch = url.match(/[?&]token=([^&?]+)/);
+
+    if (!tokenMatch)
+		return false;
+	setCookie('authToken', tokenMatch[1]);
+	window.history.replaceState({}, document.title, '/');
+	return true;
+}
+
+document.addEventListener('DOMContentLoaded', handleGitHubCallback);
 
 // Object Storage API - Signup
 document.getElementById('signupForm').addEventListener('submit', async (e) => {
