@@ -9,7 +9,8 @@ const MESSAGING_SERVICE_URL: string =
   process.env.MESSAGING_SERVICE_URL || "http://messaging-service:3334";
 const AUTH_SERVICE_URL: string =
   process.env.AUTH_SERVICE_URL || "http://auth-service:3333";
-
+const USER_SERVICE_URL: string =
+  process.env.USER_SERVICE_URL || "http://user-service:3333";
 const OBJ_SERVICE_URL: string =
   process.env.OBJ_SERVICE_URL || "http://object-api:3333";
 
@@ -35,6 +36,14 @@ app.use(
     pathFilter: (pathname: string) =>
       pathname.startsWith("/api/v1/auth") ||
       pathname.startsWith("/api/v1/account"),
+    changeOrigin: true,
+  }),
+);
+app.use(
+  createProxyMiddleware({
+    target: USER_SERVICE_URL,
+    pathFilter: (pathname: string) =>
+      pathname.startsWith("/profile") || pathname.startsWith("/friends"),
     changeOrigin: true,
   }),
 );
