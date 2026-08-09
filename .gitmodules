@@ -1,0 +1,3 @@
+[submodule "srcs/Frontend"]
+	path = srcs/Frontend
+	url = git@github.com:Raiders-io/Frontend

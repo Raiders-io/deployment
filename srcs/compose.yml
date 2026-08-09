@@ -17,6 +17,8 @@ services:
     depends_on:
       api-gateway:
         condition: service_started
+      frontend-builder:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "wget -q --no-check-certificate -O /dev/null https://127.0.0.1/ || exit 1"]
       interval: 10s
@@ -42,6 +44,16 @@ services:
       - api-network
       - gateway-network
     restart: always
+
+  frontend-builder:
+    container_name: frontend-builder
+    build:
+      context: ./Frontend
+    image: frontend-builder:local
+    volumes:
+      - frontend-builder-data:/src:rw
+      - nginx-html:/app/dist:rw
+    restart: no
 
 ## DevOps
 # Visualization tool for monitoring and analytics
@@ -123,5 +135,11 @@ volumes:
       type: none
       o: bind
       device: ./nginx/private
+  frontend-builder-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./Frontend/
   # prometheus-storage:
   # grafana-storage:
