@@ -56,6 +56,15 @@ services:
       - frontend-builder-dir:/app/:rw
       - nginx-html:/app/dist:rw
     restart: no
+  
+  redis:
+    image: redis:8.10.0-alpine3.23
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - api-network
+    restart: always
 
 ## DevOps
 # Visualization tool for monitoring and analytics
