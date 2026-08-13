@@ -65,10 +65,16 @@ services:
       GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL:?}
       GF_SERVER_SERVE_FROM_SUB_PATH: ${GF_SERVER_SERVE_FROM_SUB_PATH:?}
       GF_SERVER_HTTP_PORT: ${GF_SERVER_HTTP_PORT:?}
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+      GF_ADMIN_USER: ${GF_ADMIN_USER:?}
+      GF_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD:?}
     ports:
       - '${GRAFANA_PORT:?}:${GF_SERVER_HTTP_PORT:?}'
     volumes:
       - grafana-storage:/var/lib/grafana
+      - ./grafana/config.ini:/etc/grafana/grafana.ini:ro
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     networks:
       - monitoring-network
     restart: unless-stopped

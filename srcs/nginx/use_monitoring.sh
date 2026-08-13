@@ -44,7 +44,7 @@ cat << EOF > tmp
     }
 
 	location /grafana/ {
-		proxy_pass http://grafana:${GRAFANA_PORT}/grafana/;
+		proxy_pass http://grafana:default_port/grafana/;
         proxy_set_header Host \$http_host;
 		proxy_set_header X-Real-IP \$remote_addr;
 		proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -74,3 +74,6 @@ awk '
 }
 !skip
 ' nginx.conf > nginx.conf.new && mv nginx.conf.new nginx.conf
+rm tmp
+export $(grep GRAFANA_PORT ../.env)
+sed -i -E "s|default_port|${GRAFANA_PORT}|g" nginx.conf

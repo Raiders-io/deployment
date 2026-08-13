@@ -42,7 +42,15 @@ configure_nginx()
 	./set_server_name.sh
 }
 
+configure_grafana()
+{
+	cd srcs/
+	sed -i "s|^\(GF_ADMIN_USER=\).*|\1$(openssl rand -base64 50 | tr -dc '[:alnum:]' | head -c 50 )|" .env
+	sed -i "s|^\(GF_ADMIN_PASSWORD=\).*|\1$(openssl rand -base64 50 | tr -dc '[:alnum:]' | head -c 50 )|" .env
+}
+
 create_env
 configure_nginx
+configure_grafana
 
 echo "Environment setup complete. Please review the .env file and make any necessary adjustments."

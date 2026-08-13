@@ -69,8 +69,13 @@ up-monitoring:
 
 down-monitoring:
 	@$(MAKE) no-monitoring
-	@$(MAKE) reload-config
+	@$(MAKE) reload-config || true
 	docker compose -f srcs/compose.yml --profile monitoring down
+
+down-v-monitoring:
+	@$(MAKE) no-monitoring
+	@$(MAKE) reload-config || true
+	docker compose -f srcs/compose.yml --profile monitoring down -v
 
 ls: list
 list:
