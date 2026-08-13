@@ -54,11 +54,23 @@ up:
 down:
 	docker compose -f srcs/compose.yml down -v
 
+reload-config:
+	docker compose -f srcs/compose.yml exec nginx nginx -s reload
+
 monitoring:
 	cd srcs/nginx/ && ./use_monitoring.sh yes
 
 no-monitoring:
 	cd srcs/nginx/ && ./use_monitoring.sh no
+
+up-monitoring:
+	@$(MAKE) monitoring
+	docker compose -f srcs/compose.yml --profile monitoring up -d
+
+down-monitoring:
+	@$(MAKE) no-monitoring
+	@$(MAKE) reload-config
+	docker compose -f srcs/compose.yml --profile monitoring down
 
 ls: list
 list:

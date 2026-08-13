@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This script is used to add or remove the monitoring configuration from nginx.conf.
+# It allows only the IP range from docker containers to access the monitoring endpoints.
+# And nginx only serves the monitoring endpoints if the monitoring containers are running.
+
 while [[ $# -gt 0 ]]; do
     case $1 in
         (--yes|yes|-y|y)
@@ -35,12 +39,18 @@ echo "Adding the monitoring configuration to nginx.conf"
 
 cat << EOF > tmp
 #__MONITORING_TOOLS__
+    location = /grafana {
+        return 301 \$scheme://\$http_host/grafana/;
+    }
+
 	location /grafana/ {
-		proxy_pass http://grafana:9000/grafana/;
-		proxy_set_header Host \$host;
+		proxy_pass http://grafana:${GRAFANA_PORT}/grafana/;
+        proxy_set_header Host \$http_host;
 		proxy_set_header X-Real-IP \$remote_addr;
 		proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-		allow 172.18.0.0/16;
+        proxy_set_header X-Forwarded-Host \$http_host;
+		proxy_set_header X-Forwarded-Proto \$scheme;
+		allow 172.0.0.0/8;
 		deny all;
 	}
 
