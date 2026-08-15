@@ -49,8 +49,15 @@ configure_grafana()
 	sed -i "s|^\(GF_ADMIN_PASSWORD=\).*|\1$(openssl rand -base64 50 | tr -dc '[:alnum:]' | head -c 50 )|" .env
 }
 
+configure_frontend_api_url()
+{
+	cd srcs/
+	sed -i "s|^\(VITE_API_URL=https://\)[^/]*\(:[^/]*\)|\1$(hostname)\2|" .env
+}
+
 create_env
 configure_nginx
 configure_grafana
+configure_frontend_api_url
 
 echo "Environment setup complete. Please review the .env file and make any necessary adjustments."

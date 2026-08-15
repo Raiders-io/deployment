@@ -49,6 +49,8 @@ services:
     container_name: frontend-builder
     build:
       context: ./Frontend
+    environment:
+      - VITE_API_URL=${VITE_API_URL:?}
     image: frontend-builder:local
     volumes:
       - frontend-builder-data:/src:rw
