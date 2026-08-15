@@ -5,11 +5,14 @@
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start-trace": "node --trace-deprecation dist/index.js",
+    "start": "node --trace-deprecation dist/index.js"
   },
   "dependencies": {
     "express": "^5.0.1",
-    "http-proxy-middleware": "^3.0.3"
+    "express-rate-limit": "^8.6.2",
+    "express-slow-down": "^3.1.0",
+    "http-proxy-middleware": "^4.2.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
