@@ -86,6 +86,8 @@ services:
     profiles: [monitoring]
     image: prom/prometheus:v3.11.2-distroless
     container_name: prometheus
+    # environment:
+    #   - GARAGE_METRICS_TOKEN=${GARAGE_METRICS_TOKEN:?}
     command:
       - '--web.listen-address=:9090'
       - '--config.file=/prometheus.yml'
@@ -96,6 +98,7 @@ services:
       - ./prometheus.config.yml:/prometheus.yml
     networks:
       - monitoring-network
+      # - public-network
     restart: unless-stopped
 
 # Data collection for monitoring system
@@ -125,7 +128,7 @@ networks:
     external: true
   monitoring-network:
     driver: bridge
-    internal: true
+    external: true
 
 volumes:
   nginx-html:
