@@ -1,58 +1,42 @@
 #!/bin/bash
 
+SRCS_DIR="srcs"
+ENV_FILE="${SRCS_DIR}/.env"
+NGINX_DIR="${SRCS_DIR}/nginx"
+
 create_env()
 {
-	cd srcs/
-	if [ -f .env ]; then
-		echo ".env file already exists. Do you want to overwrite it?"
+	if [ -f "${ENV_FILE}" ]; then
+		echo ""${ENV_FILE}" file already exists. Do you want to overwrite it?"
 		read -p "Continue? (Y/n): " confirm
 		confirm=${confirm:-y} # Default to 'y' if no input is provided
 		if ! [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
 			echo "Not replacing the file."
 			# echo "Setup cancelled."
-			# exit 1
-		else
-			cp .env.example .env
-		fi
-	else
-		cp .env.example .env
-	fi
-
-	echo "Please replace the placeholder values in the .env file with your actual configuration."
-	if [ -f .env ]; then
-		echo "Did you finished configuring the .env file?"
-		read -p "Continue? (Y/n): " confirm
-		confirm=${confirm:-y} # Default to 'y' if no input is provided
-		if ! [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
-			echo "Setup cancelled."
 			exit 1
 		fi
 	fi
-	cd -
+	cp "${ENV_FILE}".example "${ENV_FILE}"
 }
 
 configure_nginx()
 {
-	cd srcs
-	export $(grep OPENSSL_SUBJ .env)
-	cd nginx/
-	chmod +x ./generate_certs.sh
-	chmod +x ./set_server_name.sh
-	./generate_certs.sh
-	./set_server_name.sh
+	chmod +x "${NGINX_DIR}/generate_certs.sh"
+	chmod +x "${NGINX_DIR}/set_server_name.sh"
+	"${NGINX_DIR}/generate_certs.sh"
+    # "${NGINX_DIR}/set_server_name.sh" interactive
+    "${NGINX_DIR}/set_server_name.sh" use_hostname
 }
 
 configure_grafana()
 {
-	cd srcs/
-	sed -i "s|^\(GF_ADMIN_USER=\).*|\1$(openssl rand -base64 50 | tr -dc '[:alnum:]' | head -c 50 )|" .env
-	sed -i "s|^\(GF_ADMIN_PASSWORD=\).*|\1$(openssl rand -base64 50 | tr -dc '[:alnum:]' | head -c 50 )|" .env
+	sed -i "s|^\(GF_ADMIN_USER=\).*|\1$(openssl rand -base64 50 | tr -dc '[:alnum:]' | head -c 50 )|" "${ENV_FILE}"
+	sed -i "s|^\(GF_ADMIN_PASSWORD=\).*|\1$(openssl rand -base64 50 | tr -dc '[:alnum:]' | head -c 50 )|" "${ENV_FILE}"
 }
 
 configure_frontend_api_url()
 {
-	cd srcs/
-	sed -i "s|^\(VITE_API_URL=https://\)[^/]*\(:[^/]*\)|\1$(hostname)\2|" .env
+	sed -i "s|^\(VITE_API_URL=https://\)[^/]*\(:[^/]*\)|\1$(hostname)\2|" "${ENV_FILE}"
 }
 
 create_env
@@ -60,4 +44,4 @@ configure_nginx
 configure_grafana
 configure_frontend_api_url
 
-echo "Environment setup complete. Please review the .env file and make any necessary adjustments."
+echo "Environment setup complete. Please review the "${ENV_FILE}" file and make any necessary adjustments."
