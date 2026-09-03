@@ -55,7 +55,7 @@ const messagingProxy = createProxyMiddleware({
   changeOrigin: true,
   ws: true,
   pathFilter: (pathname: string) =>
-    pathname.startsWith("/socket.io") || pathname.startsWith("/messaging"),
+    pathname.startsWith("/socket.io") || pathname.startsWith("/api/messaging"),
 });
 
 app.use(

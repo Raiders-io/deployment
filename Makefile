@@ -18,8 +18,7 @@ build-all:
 	@$(MAKE) $(NAME)
 	@$(MAKE) build-ObjectStorage
 	@$(MAKE) build-Backend-Auth-Service
-# 	@$(MAKE) build-Backend-Messaging-Service
-# 	@$(MAKE) launch-Frontend
+	@$(MAKE) build-Backend-Messaging-Service
 	@$(MAKE) build-Backend-Lesson
 
 build-ObjectStorage:
@@ -36,9 +35,6 @@ build-Backend-Messaging-Service:
 
 build-Backend-User-Service:
 	cd ../Backend-User-Service && docker compose -f compose.yml up -d --build --force-recreate --remove-orphans
-
-launch-Frontend:
-	cd ../Frontend && npm run dev
 
 env:
 	@chmod +x ./setup_env.sh
