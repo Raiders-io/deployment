@@ -55,7 +55,8 @@ const messagingProxy = createProxyMiddleware({
   changeOrigin: true,
   ws: true,
   pathFilter: (pathname: string) =>
-    pathname.startsWith("/socket.io") || pathname.startsWith("/api/messaging"),
+    pathname.startsWith("/api/socket.io") || 
+    pathname.startsWith("/api/messaging"),
 });
 
 app.use(
@@ -89,9 +90,7 @@ const lessonProxy = createProxyMiddleware({
   target: LESSON_SERVICE_URL,
   pathFilter: (pathname: string) =>
     pathname.startsWith("/api/v1/lessons") ||
-    pathname.startsWith("/api/v1/search") ||
-    pathname.startsWith("/lessons") ||
-    pathname.startsWith("/search"),
+    pathname.startsWith("/api/v1/search"),
   changeOrigin: true,
 });
 
