@@ -22,13 +22,13 @@ build-all:
 	@$(MAKE) build-Backend-Lesson
 
 build-ObjectStorage:
-	cd ../ObjectStorage && $(MAKE) all
+	cd ../ObjectStorage && $(MAKE) env all
 
 build-Backend-Lesson:
 	cd ../Backend-Lesson && $(MAKE) all
 
 build-Backend-Auth-Service:
-	cd ../Backend_Auth-Service && docker compose -f compose.yml up -d --build --force-recreate --remove-orphans
+	cd ../Backend_Auth-Service && $(MAKE) env all
 
 build-Backend-Messaging-Service:
 	cd ../Backend-Messaging-Service && docker compose -f compose.yml up -d --build --force-recreate --remove-orphans
