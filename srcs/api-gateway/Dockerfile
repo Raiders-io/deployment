@@ -1,4 +1,4 @@
-FROM node:24.16.0-bookworm-slim AS base
+FROM node:24.16.0-alpine3.24 AS base
 
 WORKDIR /app
 
@@ -23,17 +23,20 @@ CMD ["npm", "run", "dev"]
 # Stage : Build the application
 # ----------------------------
 FROM deps AS build
+
 COPY . .
 RUN npm run build
+# Remove dev dependencies after build to reduce image size
+COPY package*.json ./
+RUN npm ci --omit=dev
 
 # ----------------------------
 # Stage : Production runtime
 # ----------------------------
-FROM base AS production
+FROM dhi.io/node:24-alpine AS production
 ENV NODE_ENV=production
 
 COPY --from=build /app/ ./
-COPY package*.json ./
-RUN npm ci --omit=dev
+COPY --from=build /app/node_modules ./node_modules
 
-CMD ["npm", "run", "start"]
+ENTRYPOINT ["node", "--trace-deprecation", "dist/index.js"]
