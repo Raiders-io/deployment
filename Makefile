@@ -20,6 +20,7 @@ build-all:
 	@$(MAKE) build-Backend-Auth-Service
 	@$(MAKE) build-Backend-Messaging-Service
 	@$(MAKE) build-Backend-Lesson
+	@$(MAKE) build-Backend-Exam
 
 build-ObjectStorage:
 	cd ../ObjectStorage && $(MAKE) env all
@@ -35,6 +36,9 @@ build-Backend-Messaging-Service:
 
 build-Backend-User-Service:
 	cd ../Backend-User-Service && docker compose -f compose.yml up -d --build --force-recreate --remove-orphans
+
+build-Backend-Exam:
+	cd ../exam && ${MAKE}
 
 env:
 	@chmod +x ./setup_env.sh
