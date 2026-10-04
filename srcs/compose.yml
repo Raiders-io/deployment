@@ -95,8 +95,6 @@ services:
     profiles: [monitoring]
     image: prom/prometheus:v3.11.2-distroless
     container_name: prometheus
-    # environment:
-    #   - GARAGE_METRICS_TOKEN=${GARAGE_METRICS_TOKEN:?}
     command:
       - '--web.listen-address=:9090'
       - '--config.file=/prometheus.yml'
@@ -104,7 +102,7 @@ services:
       - '${PROMETHEUS_PORT:?}:9090'
     volumes:
       - prometheus-storage:/etc/prometheus/
-      - ./prometheus.config.yml:/prometheus.yml
+      - ./prometheus.yml:/prometheus.yml
     networks:
       - monitoring-network
       # - public-network

@@ -39,6 +39,22 @@ configure_frontend_api_url()
 	sed -i "s|^\(VITE_API_URL=https://\)[^/]*\(:[^/]*\)|\1$(hostname)\2|" "${ENV_FILE}"
 }
 
+configure_prometheus()
+{
+	GARAGE_ENV="../ObjectStorage/.env"
+	if [ -f "${GARAGE_ENV}" ]; then
+		GARAGE_METRICS_TOKEN=$(grep '^GARAGE_METRICS_TOKEN=' "${GARAGE_ENV}" | cut -d'=' -f2-)
+	fi
+	if [ -z "${GARAGE_METRICS_TOKEN}" ]; then
+		echo "Error: GARAGE_METRICS_TOKEN not found in ${GARAGE_ENV}"
+		echo "Please ensure ../ObjectStorage/.env contains GARAGE_METRICS_TOKEN."
+		exit 1
+	fi
+	export GARAGE_METRICS_TOKEN
+	envsubst < "${SRCS_DIR}/prometheus.template.yml" > "${SRCS_DIR}/prometheus.yml"
+	echo "Prometheus configuration generated from template."
+}
+
 create_env
 configure_nginx
 configure_grafana

@@ -40,6 +40,6 @@ scrape_configs:
     static_configs:
       - targets:
         - 'garage:3903'
-    # authorization:
-    #   type: Bearer
-    #   credentials: ${GARAGE_METRICS_TOKEN} #not working yet
+    authorization:
+      type: Bearer
+      credentials: "${GARAGE_METRICS_TOKEN}"

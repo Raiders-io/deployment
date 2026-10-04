@@ -1,3 +1,7 @@
 app/
 nginx/html/**/*
 !nginx/html/.gitkeep
+
+# Ignore the prometheus configuration file, which is generated from a template
+# It would expose GARAGE_METRICS_TOKEN if committed to the repository
+prometheus.yml

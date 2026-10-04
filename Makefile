@@ -65,7 +65,7 @@ no-monitoring:
 
 up-monitoring:
 	@$(MAKE) monitoring
-	docker compose -f srcs/compose.yml --profile monitoring up -d
+	docker compose -f srcs/compose.yml --profile monitoring up -d --force-recreate --remove-orphans
 
 down-monitoring:
 	@$(MAKE) no-monitoring
