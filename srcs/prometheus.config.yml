@@ -35,3 +35,11 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ['nginx-prometheus-exporter:9113']
+
+  - job_name: 'garage'
+    static_configs:
+      - targets:
+        - 'garage:3903'
+    # authorization:
+    #   type: Bearer
+    #   credentials: ${GARAGE_METRICS_TOKEN} #not working yet
