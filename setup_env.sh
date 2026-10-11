@@ -24,8 +24,12 @@ configure_nginx()
 	chmod +x "${NGINX_DIR}/generate_certs.sh"
 	chmod +x "${NGINX_DIR}/set_server_name.sh"
 	"${NGINX_DIR}/generate_certs.sh"
-    # "${NGINX_DIR}/set_server_name.sh" interactive
     "${NGINX_DIR}/set_server_name.sh" use_hostname
+	mkdir -p ${NGINX_DIR}/modsecurity/audit
+	chmod 777 --recursive ${NGINX_DIR}/modsecurity/audit
+	if [ $? -ne 0 ]; then
+		echo "Seems that Rights have been changed by Modsecurity, they will remain readable"
+	fi
 }
 
 configure_grafana()

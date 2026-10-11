@@ -6,25 +6,25 @@ use_hostname ()
 {
 	export HOSTNAME=$(hostname)
 	# Update nginx.conf and index.html with the new HOSTNAME
-	sed -i -E "s|(server_name\s+)(www\.)?[^;]*|\1\2${HOSTNAME}|g" ${NGINX_DIR}/nginx.conf
+	sed -i -E "s|(server_name\s+)(www\.)?[^;]*|\1\2${HOSTNAME}|g" ${NGINX_DIR}/conf.d/server.conf
 }
 
 use_domain ()
 {
 	export HOSTNAME="ENTER_YOUR_DOMAIN_HERE"
 
-	sed -i -E "s|(server_name\s+)(www\.)?[^;]*|\1\2${HOSTNAME}|g" ${NGINX_DIR}/nginx.conf
+	sed -i -E "s|(server_name\s+)(www\.)?[^;]*|\1\2${HOSTNAME}|g" ${NGINX_DIR}/conf.d/server.conf
 }
 
 # Revert
 revert ()
 {
-	sed -i -E "s|(server_name\s+)(www\.)?[^;]*|\1\2user|g" ${NGINX_DIR}/nginx.conf
+	sed -i -E "s|(server_name\s+)(www\.)?[^;]*|\1\2user|g" ${NGINX_DIR}/conf.d/server.conf
 
 	# Extreme : restore the file using git restore
 	if [ "$1" = "force" ] || [ "$1" = "-f" ]; then
 		git restore ./html/index.html
-		git restore ${NGINX_DIR}/nginx.conf
+		git restore ${NGINX_DIR}/conf.d/server.conf
 	fi
 }
 
