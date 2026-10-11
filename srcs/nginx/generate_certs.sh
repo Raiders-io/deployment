@@ -23,3 +23,8 @@ if [ $? -ne 0 ]; then
     echo "Error while generating self-signed certificate."
     exit 1
 fi
+openssl dhparam -out ${NGINX_DIR}/certs/dhparam-2048.pem -check 2048
+if [ $? -ne 0 ]; then
+    echo "Error while DH params certificate."
+    exit 1
+fi
