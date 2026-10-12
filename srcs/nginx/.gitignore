@@ -4,3 +4,4 @@ tmp*
 *.key
 certs/*
 private/*
+modsecurity/audit/*
