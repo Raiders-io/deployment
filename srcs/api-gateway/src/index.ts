@@ -81,7 +81,9 @@ app.use(
   createProxyMiddleware({
     target: USER_SERVICE_URL,
     pathFilter: (pathname: string) =>
-      pathname.startsWith("/profile") || pathname.startsWith("/friends"),
+      pathname.startsWith("/profile") ||
+      pathname.startsWith("/friends") ||
+      pathname.startsWith("/me"),
     changeOrigin: true,
   }),
 );
