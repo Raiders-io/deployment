@@ -9,7 +9,7 @@ import logger from "./logger.js";
 const app: Application = express();
 
 // Uncomment this to log the IP address of the client making the request
-// app.use(logger);
+app.use(logger);
 
 app.set("trust proxy", 1); // trust first proxy
 
@@ -81,9 +81,8 @@ app.use(
   createProxyMiddleware({
     target: USER_SERVICE_URL,
     pathFilter: (pathname: string) =>
-      pathname.startsWith("/profile") ||
-      pathname.startsWith("/friends") ||
-      pathname.startsWith("/me"),
+      pathname.startsWith("/api/v1/profile") ||
+      pathname.startsWith("/api/v1/friends"),
     changeOrigin: true,
   }),
 );

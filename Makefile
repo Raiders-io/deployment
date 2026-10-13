@@ -41,7 +41,7 @@ build-Backend-Messaging-Service:
 	cd ../Backend-Messaging-Service && docker compose -f compose.yml up -d --build --force-recreate --remove-orphans
 
 build-Backend-User-Service:
-	cd ../Backend-User-Service && docker compose -f compose.yml up -d --build --force-recreate --remove-orphans
+	cd ../Backend-User-Service && $(MAKE) all
 
 build-Backend-Exam:
 	cd ../exam && ${MAKE}
