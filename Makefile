@@ -6,13 +6,13 @@ NAME = ft_transcendance
 
 USER = $(shell whoami)
 
-
 all:
 	@$(MAKE) $(NAME)
 
 $(NAME):
 	@$(MAKE) network
 	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
+	@$(MAKE) print-url
 
 build-all:
 	@$(MAKE) $(NAME)
@@ -21,6 +21,7 @@ build-all:
 	@$(MAKE) build-Backend-Messaging-Service
 	@$(MAKE) build-Backend-Lesson
 	@$(MAKE) build-Backend-Exam
+	@$(MAKE) print-url
 
 build-ObjectStorage:
 	cd ../ObjectStorage && $(MAKE) env all
@@ -48,6 +49,9 @@ network:
 	docker network create public-network || true
 	docker network create --internal api-network || true
 	docker network create --internal monitoring-network || true
+
+print-url:
+	@echo "\nURL : https://$(shell hostname):4443/ \n"
 
 up:
 	docker compose -f srcs/compose.yml up -d
