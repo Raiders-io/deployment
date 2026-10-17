@@ -9,9 +9,14 @@ USER = $(shell whoami)
 all:
 	@$(MAKE) $(NAME)
 
-$(NAME):
+rebuild:
 	@$(MAKE) network
 	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
+	@$(MAKE) print-url
+
+$(NAME):
+	@$(MAKE) network
+	docker compose -f srcs/compose.yml up -d --remove-orphans
 	@$(MAKE) print-url
 
 build-all:
