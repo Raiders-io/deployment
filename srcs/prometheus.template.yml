@@ -43,3 +43,8 @@ scrape_configs:
     authorization:
       type: Bearer
       credentials: "${GARAGE_METRICS_TOKEN}"
+
+  - job_name: "messaging-service"
+    metrics_path: /private/messaging/metrics
+    static_configs:
+      - targets: ['messaging-service:3334']

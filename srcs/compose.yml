@@ -105,6 +105,7 @@ services:
       - ./prometheus.yml:/prometheus.yml
     networks:
       - monitoring-network
+      - api-network  
       # - public-network
     restart: unless-stopped
 

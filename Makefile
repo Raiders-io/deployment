@@ -58,7 +58,7 @@ network:
 print-url:
 	@echo "\nURL : https://$(shell hostname):4443/ \n"
 
-up:
+up: network
 	docker compose -f srcs/compose.yml up -d
 	
 down:
@@ -73,7 +73,8 @@ monitoring:
 no-monitoring:
 	cd srcs/nginx/ && ./use_monitoring.sh no
 
-up-monitoring:
+up-monitoring: network
+	cp srcs/prometheus.template.yml srcs/prometheus.yml
 	@$(MAKE) monitoring
 	docker compose -f srcs/compose.yml --profile monitoring up -d --force-recreate --remove-orphans
 
