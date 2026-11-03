@@ -16,9 +16,9 @@ app.set("trust proxy", 1); // trust first proxy
 // https://www.npmjs.com/package/express-rate-limit
 // https://express-rate-limit.mintlify.app/reference/configuration
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, //15 minutes
-  limit: 100,
-  message: "Too many requests from this IP, please try again after 15 minutes",
+  windowMs: 5 * 60 * 1000, //5 minutes
+  limit: 500,
+  message: "Too many requests from this IP, please try again after 5 minutes",
   standardHeaders: "draft-8",
   passOnStoreError: true, // Passes (true) or blocks (false) the request to the next middleware in case of store error
   // skip: // Skip the request, eg. if the request is from a trusted IP address (localhost, internal network, etc.)
@@ -28,8 +28,8 @@ const limiter = rateLimit({
 
 // https://www.npmjs.com/package/express-slow-down
 const speedLimiter = slowDown({
-  windowMs: 15 * 60 * 1000, //15 minutes
-  delayAfter: 10,
+  windowMs: 5 * 60 * 1000, //5 minutes
+  delayAfter: 400,
   delayMs: () => 200,
   maxDelayMs: 5000,
 });
