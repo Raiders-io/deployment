@@ -3,42 +3,28 @@
     {
       "name": "messaging",
       "target": "http://messaging-service:3334",
-      "routes": [
-        "/api/socket.io",
-        "/api/messaging"
-      ],
+      "routes": ["/api/socket.io", "/api/messaging"],
       "websocket": true
     },
     {
       "name": "object",
       "target": "http://object-api:3333",
-      "routes": [
-        "/api/v1/storage"
-      ]
+      "routes": ["/api/v1/storage"]
     },
     {
       "name": "auth",
       "target": "http://auth-service:3333",
-      "routes": [
-        "/api/v1/auth",
-        "/api/v1/account"
-      ]
+      "routes": ["/api/v1/auth", "/api/v1/account"]
     },
     {
       "name": "user",
       "target": "http://user-service:3333",
-      "routes": [
-        "/api/v1/profile",
-        "/api/v1/friends"
-      ]
+      "routes": ["/api/v1/profile", "/api/v1/friends"]
     },
     {
       "name": "lesson",
       "target": "http://lesson_api:3333",
-      "routes": [
-        "/api/v1/lessons",
-        "/api/v1/search"
-      ]
+      "routes": ["/api/v1/lessons", "/api/v1/search"]
     }
   ],
   "slowdown": {
