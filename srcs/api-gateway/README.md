@@ -1,6 +1,24 @@
 # API Gateway
 
+## Context
+
+_This project has been created as part of the 42 curriculum by halnuma, ppontet._
+
+## Introduction
+
+This project is a service for the project [Transcendence](https://github.com/Raiders-io/Transcendence).
 A lightweight Express-based API gateway with reverse proxy capabilities, rate limiting, and request slowing for the Transcendence project.
+
+## Features
+
+- Proxy requests from nginx to the correct API
+- Provide websocket support
+- Slow-down requests if a client send too many requests
+- Rate limit requests if a client has send even more requests
+
+## AI / LLM Usage
+
+LLM was used to enable the api-gateway to read the config of proxies from a file.
 
 ## Configuration
 

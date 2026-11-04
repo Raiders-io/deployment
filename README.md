@@ -1,8 +1,25 @@
-# deployment #
+# deployment
 
-## Usage ##
+## Context
 
-This project provides the reverse proxy for the project [Transcendence](https://github.com/Raiders-io/Transcendence) and the monitoring layer. You can access the frontend at `https://localhost:4443/`.
+_This project has been created as part of the 42 curriculum by ppontet._
+
+
+## Introduction
+
+This project provides the reverse proxy for the project [Transcendence](https://github.com/Raiders-io/Transcendence) and the monitoring layer. You can access the frontend at `https://${hostname}$:4443/`.
+
+## Features
+
+- Web server for common files of frontend
+- Proxy requests to the api-gateway
+- Slow-down requests if a client send too many requests
+- Rate limit requests if a client has send even more requests
+- Monitoring WebUI through Grafana on local access
+
+## AI / LLM Usage
+
+LLM was used to debug nginx config files.
 
 ## Installation ##
 
