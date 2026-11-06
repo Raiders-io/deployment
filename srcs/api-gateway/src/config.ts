@@ -55,9 +55,11 @@ export function readConfig(): GatewayConfig {
     config = JSON.parse(fileContent) as GatewayConfig;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    throw new Error(
+    const err = new Error(
       `Failed to read or parse gateway configuration from ${configPath}: ${errorMessage}`,
-    );
+    ) as Error & { cause?: unknown };
+    err.cause = error;
+    throw err;
   }
 
   if (
