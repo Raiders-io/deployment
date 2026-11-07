@@ -25,6 +25,11 @@
       "name": "lesson",
       "target": "http://lesson_api:3333",
       "routes": ["/api/v1/lessons", "/api/v1/search"]
+    },
+    {
+      "name": "exam",
+      "target": "http://exam_api:3333",
+      "routes": ["/api/v1/questions", "/api/v1/exam-authorings", "/api/v1/exam-papers"]
     }
   ],
   "slowdown": {
