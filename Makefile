@@ -28,6 +28,12 @@ build-all:
 	@$(MAKE) build-Backend-Exam
 	@$(MAKE) print-url
 
+build_parallel: all build-ObjectStorage build-Backend-Lesson build-Backend-Auth-Service build-Backend-Messaging-Service build-Backend-Exam print-url
+
+quick:
+	$(MAKE) build_parallel -j$(shell grep -c processor /proc/cpuinfo) -l 1.75
+
+
 build-ObjectStorage:
 	cd ../ObjectStorage && $(MAKE) env all
 
