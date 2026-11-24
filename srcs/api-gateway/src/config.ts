@@ -8,19 +8,24 @@ export interface ProxyConfig {
   websocket?: boolean;
 }
 
+export interface SlowdownConfig {
+  windowMs: number;
+  delayAfter: number;
+  delayMs: number;
+  maxDelayMs: number;
+}
+
+export interface RateLimitConfig {
+  windowMs: number;
+  limit: number;
+  message: string;
+}
+
 export interface GatewayConfig {
   proxy: ProxyConfig[];
-  slowdown: {
-    windowMs: number;
-    delayAfter: number;
-    delayMs: number;
-    maxDelayMs: number;
-  };
-  rateLimit: {
-    windowMs: number;
-    limit: number;
-    message: string;
-  };
+  logger?: boolean;
+  slowdown: boolean | SlowdownConfig;
+  rateLimit: boolean | RateLimitConfig;
 }
 
 /**
@@ -121,30 +126,39 @@ export function readConfig(): GatewayConfig {
     }
   }
 
+  // Validate logger config
+  if (config.logger !== undefined && typeof config.logger !== "boolean") {
+    throw new Error(
+      `Invalid gateway configuration in ${configPath}: 'logger' must be a boolean`,
+    );
+  }
+
   // Validate slowdown config
   if (
-    !config.slowdown ||
-    typeof config.slowdown !== "object" ||
-    typeof config.slowdown.windowMs !== "number" ||
-    typeof config.slowdown.delayAfter !== "number" ||
-    typeof config.slowdown.delayMs !== "number" ||
-    typeof config.slowdown.maxDelayMs !== "number"
+    config.slowdown === undefined ||
+    (config.slowdown !== false && 
+     (typeof config.slowdown !== "object" ||
+      typeof config.slowdown.windowMs !== "number" ||
+      typeof config.slowdown.delayAfter !== "number" ||
+      typeof config.slowdown.delayMs !== "number" ||
+      typeof config.slowdown.maxDelayMs !== "number"))
   ) {
     throw new Error(
-      `Invalid gateway configuration in ${configPath}: 'slowdown' configuration is missing or invalid`,
+      `Invalid gateway configuration in ${configPath}: 'slowdown' must be false or a valid configuration object`,
     );
   }
 
   // Validate rateLimit config
   if (
-    !config.rateLimit ||
-    typeof config.rateLimit !== "object" ||
-    typeof config.rateLimit.windowMs !== "number" ||
-    typeof config.rateLimit.limit !== "number" ||
-    typeof config.rateLimit.message !== "string"
+    config.rateLimit === undefined ||
+    (config.rateLimit !== false && 
+     (typeof config.rateLimit !== "object" ||
+      typeof config.rateLimit.windowMs !== "number" ||
+      typeof config.rateLimit.limit !== "number" ||
+      typeof config.rateLimit.message !== "string"))
   ) {
     throw new Error(
-      `Invalid gateway configuration in ${configPath}: 'rateLimit' configuration is missing or invalid`,
+      `Invalid gateway configuration in ${configPath}: 'rateLimit' must be false or a valid configuration object`,
     );
   }
 
