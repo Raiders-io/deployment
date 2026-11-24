@@ -32,15 +32,16 @@
       "routes": ["/api/v1/questions", "/api/v1/exam-authorings", "/api/v1/exam-papers"]
     }
   ],
+  "logger": false,
   "slowdown": {
-    "windowMs": 300000,
-    "delayAfter": 400,
+    "windowMs": 30000,
+    "delayAfter": 10,
     "delayMs": 200,
-    "maxDelayMs": 5000
+    "maxDelayMs": 500000
   },
   "rateLimit": {
-    "windowMs": 300000,
-    "limit": 500,
+    "windowMs": 3000,
+    "limit": 10,
     "message": "Too many requests from this IP, please try again after 5 minutes"
   }
 }
