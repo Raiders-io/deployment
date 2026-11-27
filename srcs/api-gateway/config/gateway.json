@@ -2,7 +2,7 @@
   "proxy": [
     {
       "name": "messaging",
-      "target": "http://messaging-service:3334",
+      "target": "http://messaging-api:3334",
       "routes": ["/api/socket.io", "/api/messaging"],
       "websocket": true
     },
@@ -23,7 +23,7 @@
     },
     {
       "name": "lesson",
-      "target": "http://lesson_api:3333",
+      "target": "http://lesson-api:3333",
       "routes": ["/api/v1/lessons", "/api/v1/search"]
     },
     {
