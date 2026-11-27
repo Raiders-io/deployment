@@ -33,7 +33,6 @@ build_parallel: all build-ObjectStorage build-Backend-Lesson build-Backend-Auth-
 quick:
 	$(MAKE) build_parallel -j$(shell grep -c processor /proc/cpuinfo) -l 1.75
 
-
 build-ObjectStorage:
 	cd ../ObjectStorage && $(MAKE) env all
 
@@ -44,13 +43,13 @@ build-Backend-Auth-Service:
 	cd ../Backend_Auth-Service && $(MAKE) env all
 
 build-Backend-Messaging-Service:
-	cd ../Backend-Messaging-Service && docker compose -f compose.yml up -d --build --force-recreate --remove-orphans
+	cd ../Backend-Messaging-Service && $(MAKE) env all
 
 build-Backend-User-Service:
 	cd ../Backend-User-Service && $(MAKE) all
 
 build-Backend-Exam:
-	cd ../exam && ${MAKE}
+	cd ../exam && ${MAKE} all
 
 env:
 	@chmod +x ./setup_env.sh
