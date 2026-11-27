@@ -77,3 +77,6 @@ awk '
 rm tmp
 export $(grep GRAFANA_PORT ../.env)
 sed -i -E "s|default_port|${GRAFANA_PORT}|g" nginx.conf
+
+export $(grep GARAGE_METRICS_TOKEN ../../../ObjectStorage/.env)
+envsubst < ../prometheus.template.yml > ../prometheus.yml

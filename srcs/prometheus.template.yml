@@ -44,7 +44,27 @@ scrape_configs:
       type: Bearer
       credentials: "${GARAGE_METRICS_TOKEN}"
 
-  - job_name: "messaging-service"
+  - job_name: "messaging-api"
     metrics_path: /private/messaging/metrics
     static_configs:
-      - targets: ['messaging-service:3334']
+      - targets: ['messaging-api:3334']
+
+  - job_name: "object-api"
+    metrics_path: /private/object/metrics
+    static_configs:
+      - targets: ['object-api:3333']
+
+  - job_name: "lesson-api"
+    metrics_path: /private/lesson/metrics
+    static_configs:
+      - targets: ['lesson-api:3333']
+
+  - job_name: "user-api"
+    metrics_path: /private/user/metrics
+    static_configs:
+      - targets: ['user-api:3333']
+
+  - job_name: "exam-api"
+    metrics_path: /private/exam/metrics
+    static_configs:
+      - targets: ['exam-api:3333']

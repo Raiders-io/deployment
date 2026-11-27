@@ -1,5 +1,5 @@
 services:
-### Web Server: interface for users to interact with the application
+  ### Web Server: interface for users to interact with the application
   nginx:
     container_name: nginx
     image: nginx:1.31.1-alpine-slim
@@ -20,7 +20,11 @@ services:
       frontend-builder:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --no-check-certificate -O /dev/null https://127.0.0.1/ || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --no-check-certificate -O /dev/null https://127.0.0.1/ || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       start_period: 20s
@@ -28,7 +32,7 @@ services:
     restart: always
 
   api-gateway:
-    build: 
+    build:
       context: ./api-gateway
       target: production # production or dev
     container_name: api-gateway
@@ -55,7 +59,7 @@ services:
       - frontend-builder-dir:/app/:rw
       - nginx-html:/app/dist:rw
     restart: no
-  
+
   redis:
     image: redis:8.10.0-alpine3.23
     container_name: redis
@@ -65,8 +69,8 @@ services:
       - api-network
     restart: always
 
-## DevOps
-# Visualization tool for monitoring and analytics
+  ## DevOps
+  # Visualization tool for monitoring and analytics
   grafana:
     profiles: [monitoring]
     image: grafana/grafana:13.0.1
@@ -79,7 +83,7 @@ services:
       GF_ADMIN_USER: ${GF_ADMIN_USER:?}
       GF_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD:?}
     ports:
-      - '${GRAFANA_PORT:?}:${GF_SERVER_HTTP_PORT:?}'
+      - "${GRAFANA_PORT:?}:${GF_SERVER_HTTP_PORT:?}"
     volumes:
       - grafana-storage:/var/lib/grafana
       - ./grafana/config.ini:/etc/grafana/grafana.ini:ro
@@ -89,36 +93,36 @@ services:
       - monitoring-network
     restart: unless-stopped
 
-# Data collection for monitoring system
+  # Data collection for monitoring system
   prometheus:
     profiles: [monitoring]
     image: prom/prometheus:v3.11.2-distroless
     container_name: prometheus
     command:
-      - '--web.listen-address=:9090'
-      - '--config.file=/prometheus.yml'
+      - "--web.listen-address=:9090"
+      - "--config.file=/prometheus.yml"
     ports:
-      - '${PROMETHEUS_PORT:?}:9090'
+      - "${PROMETHEUS_PORT:?}:9090"
     volumes:
       - prometheus-storage:/etc/prometheus/
       - ./prometheus.yml:/prometheus.yml
     networks:
       - monitoring-network
-      - api-network  
-      # - public-network
+      - api-network
+      - public-network
     restart: unless-stopped
 
-# Data collection for monitoring system
+  # Data collection for monitoring system
   nginx-prometheus-exporter:
     profiles: [monitoring]
     image: nginx/nginx-prometheus-exporter:1.5.1
     container_name: nginx-prometheus-exporter
     command:
-      - '--nginx.scrape-uri=https://nginx/nginx_status'
-      - '--web.listen-address=:9113'
-      - '--no-nginx.ssl-verify'
+      - "--nginx.scrape-uri=https://nginx/nginx_status"
+      - "--web.listen-address=:9113"
+      - "--no-nginx.ssl-verify"
     ports:
-      - '9113:9113'
+      - "9113:9113"
     networks:
       - monitoring-network
     restart: unless-stopped

@@ -79,7 +79,6 @@ no-monitoring:
 	cd srcs/nginx/ && ./use_monitoring.sh no
 
 up-monitoring: network
-	cp srcs/prometheus.template.yml srcs/prometheus.yml
 	@$(MAKE) monitoring
 	docker compose -f srcs/compose.yml --profile monitoring up -d --force-recreate --remove-orphans
 
