@@ -82,6 +82,7 @@ up-monitoring: network
 	cp srcs/prometheus.template.yml srcs/prometheus.yml
 	@$(MAKE) monitoring
 	docker compose -f srcs/compose.yml --profile monitoring up -d --force-recreate --remove-orphans
+	$(MAKE) print-url
 
 down-monitoring:
 	@$(MAKE) no-monitoring
